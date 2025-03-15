@@ -72,6 +72,36 @@ services:
     environment:
       DYNAMIC_CONFIG_ENABLED: true
 
+  prometheus:
+    image: prom/prometheus
+    volumes:
+      - ./prometheus/config:/etc/prometheus
+    ports:
+      - "9090:9090"
+    networks:
+      - backend-net
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  grafana:
+    image: grafana/grafana:10.4.4
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_SECURITY_ADMIN_USER=admin
+    volumes:
+      - grafana-storage:/var/lib/grafana
+    depends_on:
+      - prometheus
+    networks:
+      - backend-net
+
 networks:
   kafka-net:
     driver: bridge
+  backend-net:
+    driver: bridge
+
+volumes:
+  grafana-storage:
