@@ -1,4 +1,4 @@
-name: kafka-microservices
+name: kotlin-collection-manager
 services:
   zookeeper:
     image: confluentinc/cp-zookeeper:latest
@@ -73,6 +73,7 @@ services:
       DYNAMIC_CONFIG_ENABLED: true
 
   prometheus:
+    container_name: prometheus
     image: prom/prometheus
     volumes:
       - ./prometheus/config:/etc/prometheus
@@ -84,6 +85,7 @@ services:
       - "host.docker.internal:host-gateway"
 
   grafana:
+    container_name: grafana
     image: grafana/grafana:10.4.4
     ports:
       - "3000:3000"
