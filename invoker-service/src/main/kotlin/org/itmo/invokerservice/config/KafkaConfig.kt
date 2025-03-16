@@ -1,4 +1,4 @@
-package org.itmo.fileservice.config
+package org.itmo.invokerservice.config
 
 import org.apache.kafka.clients.admin.NewTopic
 import org.springframework.context.annotation.Bean

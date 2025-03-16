@@ -1,4 +1,4 @@
-package org.itmo.fileservice.config
+package org.itmo.invokerservice.config
 
 import org.apache.kafka.clients.producer.ProducerConfig
 import org.apache.kafka.common.serialization.StringSerializer

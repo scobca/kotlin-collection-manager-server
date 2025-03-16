@@ -1,4 +1,4 @@
-package org.itmo.fileservice.utils
+package org.itmo.collectionservice.utils
 
 import org.springframework.stereotype.Component
 import reactor.core.publisher.Flux

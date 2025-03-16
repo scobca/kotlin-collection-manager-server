@@ -1,4 +1,4 @@
-package org.itmo.fileservice.config
+package org.itmo.collectionservice.config
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.apache.kafka.clients.consumer.ConsumerConfig
@@ -14,7 +14,7 @@ class ReactiveKafkaConsumerConfig {
     fun receiverOptions(): ReceiverOptions<String, Any> {
         val props = mutableMapOf<String, Any>(
             ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG to "localhost:9092,localhost:9093,localhost:9094",
-            ConsumerConfig.GROUP_ID_CONFIG to "file-service-group",
+            ConsumerConfig.GROUP_ID_CONFIG to "collection-service-group",
             ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG to StringDeserializer::class.java,
             ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG to CustomJsonDeserializer::class.java,
             ConsumerConfig.AUTO_OFFSET_RESET_CONFIG to "latest",
@@ -43,6 +43,6 @@ class ReactiveKafkaConsumerConfig {
 
     @Bean
     fun customJsonDeserializer(): CustomJsonDeserializer {
-        return CustomJsonDeserializer(ObjectMapper(), "org.itmo.fileservice")
+        return CustomJsonDeserializer(ObjectMapper(), "org.itmo.collectionservice")
     }
 }

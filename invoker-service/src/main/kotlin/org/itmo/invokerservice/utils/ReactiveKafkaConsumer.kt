@@ -1,4 +1,4 @@
-package org.itmo.fileservice.utils
+package org.itmo.invokerservice.utils
 
 import org.springframework.stereotype.Component
 import reactor.core.publisher.Flux
@@ -10,5 +10,6 @@ class ReactiveKafkaConsumer(private val kafkaReceiver: KafkaReceiver<String, Any
         return kafkaReceiver.receive()
             .filter { it.topic() == topic }
             .map { it.value() }
+            .doFinally { println(it) }
     }
 }
