@@ -63,33 +63,6 @@ services:
       KAFKA_JMX_PORT: 9998
       KAFKA_JMX_HOSTNAME: kafka2
 
-  kafka-3:
-    image: confluentinc/cp-kafka:latest
-    container_name: kafka-3
-    hostname: kafka3
-    networks:
-      - kafka-net
-    depends_on:
-      - zookeeper
-      - kafka-1
-      - kafka-2
-    ports:
-      - "9094:9094"
-      - "9999:9999"
-    environment:
-      KAFKA_BROKER_ID: 3
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka3:29094,PLAINTEXT_HOST://localhost:9094
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
-      KAFKA_CONFLUENT_LICENSE_TOPIC_REPLICATION_FACTOR: 1
-      KAFKA_CONFLUENT_BALANCER_TOPIC_REPLICATION_FACTOR: 1
-      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
-      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
-      KAFKA_JMX_PORT: 9999
-      KAFKA_JMX_HOSTNAME: kafka3
-
   kafka-ui:
     image: provectuslabs/kafka-ui
     networks:
@@ -98,7 +71,6 @@ services:
       - zookeeper
       - kafka-1
       - kafka-2
-      - kafka-3
     container_name: kafka-ui
     ports:
       - "8090:8080"
