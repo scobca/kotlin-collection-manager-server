@@ -17,7 +17,6 @@ class ReactiveKafkaConsumerConfig {
             ConsumerConfig.GROUP_ID_CONFIG to "invoker-service-group",
             ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG to StringDeserializer::class.java,
             ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG to CustomJsonDeserializer::class.java,
-            ConsumerConfig.AUTO_OFFSET_RESET_CONFIG to "latest",
             ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG to 30000,
             ConsumerConfig.HEARTBEAT_INTERVAL_MS_CONFIG to 10000
         )
@@ -25,7 +24,7 @@ class ReactiveKafkaConsumerConfig {
             .subscription(
                 listOf(
                     "system",
-                    "system-synchronization",
+                    "require-system-synchronization",
                     "commands-synchronization",
                     "collection-synchronization",
                     "error",

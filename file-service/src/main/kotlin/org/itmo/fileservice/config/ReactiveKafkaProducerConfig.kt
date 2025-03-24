@@ -13,7 +13,7 @@ class ReactiveKafkaProducerConfig {
     @Bean
     fun jsonSenderOptions(): SenderOptions<String, Any> {
         val props = mutableMapOf<String, Any>(
-            ProducerConfig.BOOTSTRAP_SERVERS_CONFIG to "localhost:9092,localhost:9093,localhost:9094",
+            ProducerConfig.BOOTSTRAP_SERVERS_CONFIG to "localhost:9092,localhost:9093",
             ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG to StringSerializer::class.java,
             ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG to JsonSerializer::class.java,
             ProducerConfig.ACKS_CONFIG to "all",
