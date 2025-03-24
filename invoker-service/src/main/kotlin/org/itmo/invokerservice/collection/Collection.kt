@@ -1,6 +1,6 @@
-package org.itmo.fileservice.collection
+package org.itmo.invokerservice.collection
 
-import org.itmo.fileservice.collection.items.Flat
+import org.itmo.invokerservice.collection.items.Flat
 import org.springframework.stereotype.Component
 import reactor.core.publisher.Mono
 import java.time.ZonedDateTime
