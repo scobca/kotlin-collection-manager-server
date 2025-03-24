@@ -13,12 +13,13 @@ class ReactiveKafkaConsumerConfig {
     @Bean
     fun receiverOptions(): ReceiverOptions<String, Any> {
         val props = mutableMapOf<String, Any>(
-            ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG to "localhost:9092,localhost:9093",
+            ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG to "localhost:9092",
             ConsumerConfig.GROUP_ID_CONFIG to "collection-service-group",
             ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG to StringDeserializer::class.java,
             ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG to CustomJsonDeserializer::class.java,
-            ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG to 30000,
-            ConsumerConfig.HEARTBEAT_INTERVAL_MS_CONFIG to 10000
+            ConsumerConfig.AUTO_OFFSET_RESET_CONFIG to "earliest",
+            ConsumerConfig.HEARTBEAT_INTERVAL_MS_CONFIG to "1000",
+            ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG to "60000",
         )
         return ReceiverOptions.create<String, Any>(props)
             .subscription(
