@@ -32,6 +32,7 @@ dependencies {
     implementation("io.projectreactor.kafka:reactor-kafka")
     implementation("io.micrometer:micrometer-registry-prometheus")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
