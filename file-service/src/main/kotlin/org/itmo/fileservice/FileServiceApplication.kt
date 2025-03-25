@@ -1,35 +1,37 @@
 package org.itmo.fileservice
 
-import org.itmo.fileservice.config.dto.KafkaSystemMessage
-import org.itmo.fileservice.config.enums.SystemServices
-import org.itmo.fileservice.config.enums.SystemThemes
-import org.itmo.fileservice.utils.ReactiveKafkaConsumer
-import org.itmo.fileservice.utils.ReactiveKafkaProducer
+import org.itmo.fileservice.collection.Collection
+import org.itmo.fileservice.utils.CollectionExecutorUtil
+import org.itmo.fileservice.utils.KafkaSystemUtil
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.CommandLineRunner
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 import reactor.core.scheduler.Schedulers
+import kotlin.collections.isNotEmpty
 
 @SpringBootApplication
 class FileServiceApplication(
-    private val producer: ReactiveKafkaProducer,
-    private val consumer: ReactiveKafkaConsumer
+    private val kafkaSystemUtil: KafkaSystemUtil,
+    private val collectionExecutor: CollectionExecutorUtil,
+    @Autowired private val collection: Collection
 ) : CommandLineRunner {
+    private val baseFilename = "database.json"
 
     override fun run(vararg args: String?) {
-        val message = KafkaSystemMessage(SystemThemes.SERVICE_STARTED, SystemServices.FILE_SERVICE, null)
-        producer.sendEvent("system", message)
-            .doFinally { println("Message sent") }
-            .subscribeOn(Schedulers.boundedElastic())
+        collectionExecutor
+            .getCollectionFromFile(baseFilename, if (args.isNotEmpty()) args[0]?.trim() else null)
+            .publishOn(Schedulers.boundedElastic())
+            .doOnSuccess {
+                collection.getFlats()
+                    .map { flats ->
+                        flats.forEach { println(it) }
+                    }
+                    .subscribe()
+                kafkaSystemUtil.listenRSSEvent().subscribe()
+                kafkaSystemUtil.noticeServiceStarted().subscribe()
+            }
             .subscribe()
-
-        consumer.listenRSSEvent()
-            .doOnNext { it -> println(it.message) }
-            .subscribeOn(Schedulers.boundedElastic())
-            .subscribe(
-                { },
-                { error -> println("Error: $error") }
-            )
     }
 }
 
