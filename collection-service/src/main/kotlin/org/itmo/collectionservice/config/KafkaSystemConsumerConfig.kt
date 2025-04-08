@@ -5,6 +5,7 @@ import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.apache.kafka.common.serialization.StringDeserializer
 import org.itmo.collectionservice.kafka.dto.KafkaSystemMessageDto
 import org.itmo.collectionservice.serializers.KafkaSystemMessageDeserializer
+import org.itmo.collectionservice.services.CollectionService
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.kafka.annotation.KafkaListener
@@ -26,12 +27,15 @@ class KafkaConsumerConfig {
 }
 
 @Service
-class KafkaSystemMessagesConsumer(private val deserializer: KafkaSystemMessageDeserializer) {
+class KafkaSystemMessagesConsumer(
+    private val deserializer: KafkaSystemMessageDeserializer,
+    private val collectionService: CollectionService,
+) {
     @KafkaListener(topics = ["SYSTEM"], groupId = "InvokerService")
-    fun receiveMessage(consumerRecord: ConsumerRecord<String, String>): KafkaSystemMessageDto {
+    suspend fun receiveMessage(consumerRecord: ConsumerRecord<String, String>) {
         val message = deserializer.deserialize("SYSTEM", consumerRecord.value().toString().toByteArray())
         println(message)
 
-        return message
+        collectionService.getCollection()
     }
 }

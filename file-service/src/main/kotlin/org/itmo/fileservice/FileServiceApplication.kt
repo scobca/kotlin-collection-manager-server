@@ -1,14 +1,21 @@
 package org.itmo.fileservice
 
+import org.itmo.fileservice.strategies.StartupStrategy
+import org.itmo.fileservice.utils.GlobalStorage
 import org.springframework.boot.CommandLineRunner
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 
 @SpringBootApplication
 class FileServiceApplication(
+    private val startupStrategy: StartupStrategy
 ) : CommandLineRunner {
+    override fun run(vararg args: String?) {
+        val filename = if (args.isNotEmpty()) args[0].toString().trim() else "default.json"
+        GlobalStorage.setDatabaseFilename(filename)
 
-    override fun run(vararg args: String?) {}
+        startupStrategy.applicationStart()
+    }
 }
 
 fun main(args: Array<String>) {
