@@ -11,6 +11,7 @@ import org.itmo.fileservice.collection.items.House
 import org.itmo.fileservice.parser.dto.CoordinatesDto
 import org.itmo.fileservice.parser.dto.FlatDto
 import org.itmo.fileservice.parser.dto.HouseDto
+import org.itmo.fileservice.services.ReceiverService
 import org.itmo.fileservice.utils.GlobalStorage
 import org.springframework.stereotype.Service
 import java.io.File
@@ -49,14 +50,13 @@ fun FlatDto.toFlat(): Flat {
 }
 
 @Service
-class FlatParser {
+class FlatParser(private val receiver: ReceiverService) {
     @OptIn(ExperimentalSerializationApi::class)
     fun parseFromJson(inputStream: InputStream) {
         try {
             val flats = Json.decodeFromStream<List<FlatDto>>(inputStream)
 
-            flats.forEach { flat -> println(flat) }
-
+            flats.forEach { flatDto -> receiver.insert(flatDto.toFlat()) }
         } catch (e: Exception) {
             println(e.message)
         }
@@ -71,9 +71,7 @@ class FlatParser {
             if (resource.exists()) resource.delete()
             resource.createNewFile()
 
-            val flatsJson = flats.values.map { flat ->
-                val flatDto = flat.toSerializable()
-            }
+            val flatsJson = flats.values.map { flat -> flat.toSerializable() }
 
             FileOutputStream(resource).use { writer ->
                 Json.encodeToStream(flatsJson, writer)

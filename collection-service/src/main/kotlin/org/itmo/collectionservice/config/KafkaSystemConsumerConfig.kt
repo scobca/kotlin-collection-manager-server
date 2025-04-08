@@ -4,6 +4,7 @@ import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.apache.kafka.common.serialization.StringDeserializer
 import org.itmo.collectionservice.kafka.dto.KafkaSystemMessageDto
+import org.itmo.collectionservice.kafka.enums.KafkaServices
 import org.itmo.collectionservice.serializers.KafkaSystemMessageDeserializer
 import org.itmo.collectionservice.services.CollectionService
 import org.springframework.context.annotation.Bean
@@ -36,6 +37,8 @@ class KafkaSystemMessagesConsumer(
         val message = deserializer.deserialize("SYSTEM", consumerRecord.value().toString().toByteArray())
         println(message)
 
-        collectionService.getCollection()
+        if (message.service == KafkaServices.FILE_SERVICE) {
+            collectionService.getCollection()
+        }
     }
 }
