@@ -26,9 +26,13 @@ dependencies {
     //Spring
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
+    implementation("org.springframework.boot:spring-boot-starter-webflux")
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+
+    //Netty config
+    runtimeOnly("io.netty:netty-resolver-dns-native-macos:4.1.76.Final:osx-aarch_64")
 
     //Kafka
     implementation("org.springframework.kafka:spring-kafka")
@@ -52,6 +56,7 @@ dependencies {
     //Tests
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    testImplementation("io.projectreactor:reactor-test")
 }
 
 kotlin {
