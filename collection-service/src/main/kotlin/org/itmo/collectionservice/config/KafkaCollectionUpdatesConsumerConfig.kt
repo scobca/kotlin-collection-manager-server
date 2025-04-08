@@ -18,7 +18,7 @@ class KafkaCollectionUpdatesConsumerConfig {
     fun kafkaCollectionUpdatesConsumerFactory(): ConsumerFactory<String, KafkaCollectionUpdateDto> {
         val props = HashMap<String, Any>()
         props[ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG] = "localhost:9091"
-        props[ConsumerConfig.GROUP_ID_CONFIG] = "NewTopicGroup"
+        props[ConsumerConfig.GROUP_ID_CONFIG] = "CollectionService"
         props[ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG] = StringDeserializer::class.java
         props[ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG] = KafkaCollectionUpdatesDeserializer::class.java
         return DefaultKafkaConsumerFactory(props)
@@ -26,9 +26,12 @@ class KafkaCollectionUpdatesConsumerConfig {
 }
 
 @Service
-class KafkaCollectionUpdatesConsumer {
-    @KafkaListener(topics = ["COLLECTION_UPDATE"], groupId = "NewTopicGroup")
-    fun receiveMessage(consumerRecord: ConsumerRecord<String, KafkaCollectionUpdateDto>) {
-        println(consumerRecord.value())
+class KafkaCollectionUpdatesConsumer(private val deserializer: KafkaCollectionUpdatesDeserializer) {
+    @KafkaListener(topics = ["COLLECTION_UPDATE"], groupId = "CollectionService")
+    fun receiveMessage(consumerRecord: ConsumerRecord<String, String>): KafkaCollectionUpdateDto {
+        val message = deserializer.deserialize("COLLECTION_UPDATE", consumerRecord.value().toString().toByteArray())
+        println(message)
+
+        return message
     }
 }

@@ -26,9 +26,12 @@ class KafkaCollectionUpdatesConsumerConfig {
 }
 
 @Service
-class KafkaCollectionUpdatesConsumer {
-    @KafkaListener(topics = ["COLLECTION_UPDATE"], groupId = "NewTopicGroup")
-    fun receiveMessage(consumerRecord: ConsumerRecord<String, KafkaCollectionUpdateDto>) {
-        println(consumerRecord.value())
+class KafkaCollectionUpdatesConsumer(private val deserializer: KafkaCollectionUpdatesDeserializer) {
+    @KafkaListener(topics = ["COLLECTION_UPDATE"], groupId = "FileService")
+    fun receiveMessage(consumerRecord: ConsumerRecord<String, String>): KafkaCollectionUpdateDto {
+        val message = deserializer.deserialize("COLLECTION_UPDATE", consumerRecord.value().toString().toByteArray())
+        println(message)
+
+        return message
     }
 }

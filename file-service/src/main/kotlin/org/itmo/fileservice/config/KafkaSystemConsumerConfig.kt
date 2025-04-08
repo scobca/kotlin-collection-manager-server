@@ -18,7 +18,7 @@ class KafkaConsumerConfig {
     fun kafkaSystemMessageConsumerFactory(): ConsumerFactory<String, KafkaSystemMessageDto> {
         val props = HashMap<String, Any>()
         props[ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG] = "localhost:9091"
-        props[ConsumerConfig.GROUP_ID_CONFIG] = "InvokerService"
+        props[ConsumerConfig.GROUP_ID_CONFIG] = "FileService"
         props[ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG] = StringDeserializer::class.java
         props[ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG] = KafkaSystemMessageDeserializer::class.java
         return DefaultKafkaConsumerFactory(props)
@@ -26,9 +26,12 @@ class KafkaConsumerConfig {
 }
 
 @Service
-class KafkaSystemMessagesConsumer {
-    @KafkaListener(topics = ["SYSTEM"], groupId = "InvokerService")
-    fun receiveMessage(consumerRecord: ConsumerRecord<String, KafkaSystemMessageDto>) {
-        println(consumerRecord.value())
+class KafkaSystemMessagesConsumer(private val deserializer: KafkaSystemMessageDeserializer) {
+    @KafkaListener(topics = ["SYSTEM"], groupId = "FileService")
+    fun receiveMessage(consumerRecord: ConsumerRecord<String, String>): KafkaSystemMessageDto {
+        val message = deserializer.deserialize("SYSTEM", consumerRecord.value().toString().toByteArray())
+        println(message)
+
+        return message
     }
 }
