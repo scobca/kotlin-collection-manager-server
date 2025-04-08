@@ -1,5 +1,8 @@
 package org.itmo.fileservice.collection.items
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 enum class Furnish {
     DESIGNER,
     FINE,
