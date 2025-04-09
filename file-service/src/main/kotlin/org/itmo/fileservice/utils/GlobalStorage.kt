@@ -1,5 +1,7 @@
 package org.itmo.fileservice.utils
 
+import java.io.File
+
 object GlobalStorage {
     private var databaseFilename: String = ""
     private var lastSaveIndex: Long = 0
@@ -17,16 +19,17 @@ object GlobalStorage {
     }
 
     fun getNewSaveFilename(): String {
-        val newIndex = getLastSaveIndex().toLong() + 1
         lastSaveIndex++
 
-        return databaseFilename + "_" + newIndex
+        val fileExtension = databaseFilename.split(".").last()
+        return databaseFilename.split(".").dropLast(1).joinToString(".") + "_version$lastSaveIndex" + ".$fileExtension"
     }
 
     fun getDatabaseFilename(): String {
         return databaseFilename
     }
-    fun getLastSaveIndex(): Int {
-        return lastSaveIndex.toInt()
+
+    fun getLastSaveIndex(): Long {
+        return lastSaveIndex
     }
 }

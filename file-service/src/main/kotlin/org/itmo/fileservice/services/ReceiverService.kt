@@ -16,4 +16,8 @@ class ReceiverService(@Autowired private var collection: Collection) {
         collection.getFlats()[flat.getId()] = flat
         println("Flat created successfully")
     }
+
+    fun clear() {
+        collection.getFlats().clear()
+    }
 }

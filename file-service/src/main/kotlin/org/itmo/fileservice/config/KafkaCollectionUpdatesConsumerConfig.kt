@@ -4,6 +4,7 @@ import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.apache.kafka.common.serialization.StringDeserializer
 import org.itmo.fileservice.kafka.dto.KafkaCollectionUpdateDto
+import org.itmo.fileservice.parser.FlatParser
 import org.itmo.fileservice.serializers.KafkaCollectionUpdatesDeserializer
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -26,12 +27,15 @@ class KafkaCollectionUpdatesConsumerConfig {
 }
 
 @Service
-class KafkaCollectionUpdatesConsumer(private val deserializer: KafkaCollectionUpdatesDeserializer) {
+class KafkaCollectionUpdatesConsumer(
+    private val deserializer: KafkaCollectionUpdatesDeserializer,
+    private val parser: FlatParser
+) {
     @KafkaListener(topics = ["COLLECTION_UPDATE"], groupId = "FileService")
-    fun receiveMessage(consumerRecord: ConsumerRecord<String, String>): KafkaCollectionUpdateDto {
+    fun receiveMessage(consumerRecord: ConsumerRecord<String, String>) {
         val message = deserializer.deserialize("COLLECTION_UPDATE", consumerRecord.value().toString().toByteArray())
         println(message)
 
-        return message
+        parser.parseFlatsFromKafkaMessage(message.flats)
     }
 }

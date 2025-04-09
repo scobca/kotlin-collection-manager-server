@@ -1,5 +1,6 @@
 package org.itmo.collectionservice.parser
 
+import org.itmo.collectionservice.collection.Collection
 import org.itmo.collectionservice.collection.items.Coordinates
 import org.itmo.collectionservice.collection.items.Flat
 import org.itmo.collectionservice.collection.items.Furnish
@@ -40,4 +41,9 @@ fun FlatDto.toFlat(): Flat {
 }
 
 @Service
-class FlatParser {}
+class FlatParser(private val collection: Collection) {
+    fun prepareCollectionForSending(): List<FlatDto> {
+        val flats = collection.getFlats()
+        return flats.values.map { flat -> flat.toSerializable() }
+    }
+}

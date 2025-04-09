@@ -4,6 +4,7 @@ import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromStream
 import kotlinx.serialization.json.encodeToStream
+import org.itmo.fileservice.collection.Collection
 import org.itmo.fileservice.collection.items.Coordinates
 import org.itmo.fileservice.collection.items.Flat
 import org.itmo.fileservice.collection.items.Furnish
@@ -17,6 +18,9 @@ import org.springframework.stereotype.Service
 import java.io.File
 import java.io.FileOutputStream
 import java.io.InputStream
+import java.nio.file.Files
+import java.nio.file.Paths
+import java.nio.file.StandardCopyOption
 import java.util.TreeMap
 
 fun Flat.toSerializable(): FlatDto {
@@ -50,7 +54,10 @@ fun FlatDto.toFlat(): Flat {
 }
 
 @Service
-class FlatParser(private val receiver: ReceiverService) {
+class FlatParser(
+    private val receiver: ReceiverService,
+    private val collection: Collection
+) {
     @OptIn(ExperimentalSerializationApi::class)
     fun parseFromJson(inputStream: InputStream) {
         try {
@@ -62,14 +69,41 @@ class FlatParser(private val receiver: ReceiverService) {
         }
     }
 
-    @OptIn(ExperimentalSerializationApi::class)
-    fun parseToJson(flats: TreeMap<Long, Flat>) {
-        val filename = GlobalStorage.getNewSaveFilename()
-        val resource = File(filename)
+    fun parseFlatsFromKafkaMessage(flatsJson: List<FlatDto>) {
+        val flatsBackup = collection.getFlats()
+        receiver.clear()
 
         try {
-            if (resource.exists()) resource.delete()
-            resource.createNewFile()
+            flatsJson.forEach { flatDto -> receiver.insert(flatDto.toFlat()) }
+
+            this.parseToJson(collection.getFlats())
+        } catch (e: Exception) {
+            receiver.clear()
+            flatsBackup.forEach { flat -> receiver.insert(flat.value) }
+
+            println(e.message)
+        }
+    }
+
+    @OptIn(ExperimentalSerializationApi::class)
+    fun parseToJson(flats: TreeMap<Long, Flat>) {
+        val filename = GlobalStorage.getDatabaseFilename()
+        val resource = File(filename)
+        println("$filename — filename")
+
+        val newFilename = GlobalStorage.getNewSaveFilename()
+        val newResource = File(newFilename)
+        println("$newFilename — newFilename")
+
+        try {
+            if (newResource.exists()) newResource.delete() else newResource.createNewFile()
+            Files.copy(
+                Paths.get(resource.absolutePath),
+                Paths.get(newResource.absolutePath),
+                StandardCopyOption.REPLACE_EXISTING
+            )
+
+            resource.writeText("")
 
             val flatsJson = flats.values.map { flat -> flat.toSerializable() }
 

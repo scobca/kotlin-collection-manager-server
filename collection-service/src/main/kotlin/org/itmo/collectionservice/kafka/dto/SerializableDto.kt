@@ -3,6 +3,7 @@ package org.itmo.collectionservice.kafka.dto
 import kotlinx.serialization.Serializable
 import org.itmo.collectionservice.kafka.enums.KafkaServices
 import org.itmo.collectionservice.kafka.enums.KafkaSystemThemes
+import org.itmo.collectionservice.parser.dto.FlatDto
 import org.itmo.collectionservice.serializers.KafkaServicesSerializer
 import org.itmo.collectionservice.serializers.KafkaSystemThemesSerializer
 
@@ -22,5 +23,5 @@ data class KafkaSystemMessageDto (
 
 @Serializable
 data class KafkaCollectionUpdateDto (
-    val message: String
+    val flats: List<FlatDto>,
 ) : SerializableDto()
