@@ -1,5 +1,6 @@
 package org.itmo.collectionservice.services
 
+import org.itmo.collectionservice.annotations.ChangingCollection
 import org.itmo.collectionservice.collection.Collection
 import org.itmo.collectionservice.collection.items.Flat
 import org.itmo.collectionservice.controllers.dto.ReplaceIfLowerDto
@@ -40,11 +41,13 @@ class CommandService(@Autowired private val collection: Collection) {
         return CommandHttpResponse<TreeMap<Long, Flat>>(HttpStatus.OK, flats)
     }
 
+    @ChangingCollection
     fun insert(flat: Flat): CommandHttpResponse<String> {
         collection.getFlats()[flat.getId()] = flat
         return CommandHttpResponse(HttpStatus.OK, "Flat created")
     }
 
+    @ChangingCollection
     fun update(flat: Flat): CommandHttpResponse<String> {
         val flatId = flat.getId()
         val oldFlat = collection.getFlats()[flatId]
@@ -57,6 +60,7 @@ class CommandService(@Autowired private val collection: Collection) {
         }
     }
 
+    @ChangingCollection
     fun remove(flatId: Long): CommandHttpResponse<String> {
         val flat = collection.getFlats()[flatId]
 
@@ -68,6 +72,7 @@ class CommandService(@Autowired private val collection: Collection) {
         }
     }
 
+    @ChangingCollection
     fun removeIfLowerKey(id: Long): CommandHttpResponse<String> {
         val flats = collection.getFlats()
         val removableFlats = mutableListOf<Long>()
@@ -83,6 +88,7 @@ class CommandService(@Autowired private val collection: Collection) {
         return CommandHttpResponse(HttpStatus.OK, "Flats removed by lower ID")
     }
 
+    @ChangingCollection
     fun removeAllByBalcony(bool: String): CommandHttpResponse<String> {
         val flats = collection.getFlats()
         val removableFlats = mutableListOf<Long>()
@@ -98,12 +104,14 @@ class CommandService(@Autowired private val collection: Collection) {
         return CommandHttpResponse(HttpStatus.OK, "Flats removed by balcony")
     }
 
+    @ChangingCollection
     fun clear(): CommandHttpResponse<String> {
         collection.getFlats().clear()
 
         return CommandHttpResponse(HttpStatus.OK, "Collection cleaned")
     }
 
+    @ChangingCollection
     fun replaceIfLower(body: ReplaceIfLowerDto): CommandHttpResponse<String> {
         val comparableFlat = collection.getFlats()[body.id]
 

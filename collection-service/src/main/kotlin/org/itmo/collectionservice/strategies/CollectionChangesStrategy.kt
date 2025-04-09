@@ -13,7 +13,5 @@ class CollectionChangesStrategy(
     fun onCollectionUpdate() {
         val jsonFlats = flatParser.prepareCollectionForSending()
         collectionUpdatesProducer.sendEvent(KafkaCollectionUpdateDto(jsonFlats))
-
-        println("Collection updates sent.")
     }
 }
