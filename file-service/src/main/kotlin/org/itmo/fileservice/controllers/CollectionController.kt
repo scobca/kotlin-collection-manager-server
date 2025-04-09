@@ -8,9 +8,9 @@ import org.springframework.web.bind.annotation.RestController
 import java.util.TreeMap
 
 @RestController
-@RequestMapping("/collection")
+@RequestMapping("/service/v1/collection")
 class CollectionController(private val receiver: ReceiverService) {
-    @GetMapping("/getCollection")
+    @GetMapping
     fun getCollection(): TreeMap<Long, Flat> {
         return receiver.getFlats()
     }
