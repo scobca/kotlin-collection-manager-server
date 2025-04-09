@@ -5,6 +5,8 @@ import java.time.ZonedDateTime
 import java.util.TreeMap
 
 data class CollectionInfoDto(
+    private val type: String,
     private val initDate: ZonedDateTime,
     private val flats: TreeMap<Long, Flat>,
+    private val collectionSize: Int,
 )

@@ -9,7 +9,7 @@ import java.util.TreeMap
 @Service
 class CollectionService(
     private val fileServiceWebClient: WebClient,
-    private val receiver: ReceiverService
+    private val commandService: CommandService
 ) {
     suspend fun getCollection() {
         val response = fileServiceWebClient
@@ -19,7 +19,7 @@ class CollectionService(
             .awaitBody<TreeMap<Long, Flat>>()
 
         response.forEach { flat ->
-            receiver.insert(flat.value)
+            commandService.insert(flat.value)
         }
     }
 }
