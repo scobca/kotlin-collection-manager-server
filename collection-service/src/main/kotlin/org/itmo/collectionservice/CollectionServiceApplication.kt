@@ -1,13 +1,18 @@
 package org.itmo.collectionservice
 
+import org.itmo.collectionservice.services.ApiEndpointService
 import org.itmo.collectionservice.strategies.StartupStrategy
 import org.springframework.boot.CommandLineRunner
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 
 @SpringBootApplication
-class CollectionServiceApplication(private val startup: StartupStrategy) : CommandLineRunner {
+class CollectionServiceApplication(
+    private val startup: StartupStrategy,
+    private val apiEndpointService: ApiEndpointService
+) : CommandLineRunner {
     override fun run(vararg args: String?) {
+        val commands = apiEndpointService.getApiEndpoint()
         startup.applicationStart()
     }
 }
