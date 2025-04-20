@@ -2,5 +2,6 @@ package org.itmo.invokerservice.kafka.enums
 
 enum class KafkaEvents {
     SYSTEM,
-    COLLECTION_UPDATE,
+    COMMANDS_SYNCHRONIZATION,
+    REQUEST_COMMANDS,
 }
