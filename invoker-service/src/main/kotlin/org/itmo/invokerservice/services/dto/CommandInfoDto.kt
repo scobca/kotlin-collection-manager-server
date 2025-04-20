@@ -1,4 +1,4 @@
-package org.itmo.collectionservice.services.dto
+package org.itmo.invokerservice.services.dto
 
 import kotlinx.serialization.Serializable
 

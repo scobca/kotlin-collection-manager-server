@@ -10,7 +10,7 @@ import java.util.TreeMap
 @RestController
 @RequestMapping("/service/v1/collection")
 class CollectionController(private val receiver: ReceiverService) {
-    @GetMapping
+    @GetMapping("/get")
     fun getCollection(): TreeMap<Long, Flat> {
         return receiver.getFlats()
     }

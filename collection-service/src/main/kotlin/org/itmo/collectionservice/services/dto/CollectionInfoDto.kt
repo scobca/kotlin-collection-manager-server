@@ -1,12 +1,12 @@
 package org.itmo.collectionservice.services.dto
 
-import org.itmo.collectionservice.collection.items.Flat
-import java.time.ZonedDateTime
-import java.util.TreeMap
+import kotlinx.serialization.Serializable
+import org.itmo.collectionservice.parser.dto.FlatDto
 
+@Serializable
 data class CollectionInfoDto(
     private val type: String,
-    private val initDate: ZonedDateTime,
-    private val flats: TreeMap<Long, Flat>,
+    private val initDate: String,
+    private val flats: List<FlatDto>,
     private val collectionSize: Int,
 )

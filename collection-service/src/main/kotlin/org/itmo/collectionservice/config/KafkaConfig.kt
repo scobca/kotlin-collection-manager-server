@@ -25,4 +25,13 @@ class KafkaConfig {
             .replicas(1)
             .build()
     }
+
+    @Bean
+    fun commandsSynchronization(): NewTopic {
+        return TopicBuilder
+            .name(KafkaEvents.COMMANDS_SYNCHRONIZATION.name)
+            .partitions(3)
+            .replicas(1)
+            .build()
+    }
 }

@@ -3,10 +3,13 @@ package org.itmo.collectionservice.config
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.apache.kafka.common.serialization.StringDeserializer
+import org.itmo.collectionservice.kafka.dto.KafkaCommandsSynchronizationDto
 import org.itmo.collectionservice.kafka.dto.KafkaSystemMessageDto
 import org.itmo.collectionservice.kafka.enums.KafkaServices
+import org.itmo.collectionservice.kafka.enums.KafkaSystemThemes
 import org.itmo.collectionservice.serializers.KafkaSystemMessageDeserializer
 import org.itmo.collectionservice.services.CollectionService
+import org.itmo.collectionservice.storages.CommandsStorage
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.kafka.annotation.KafkaListener
@@ -31,14 +34,20 @@ class KafkaConsumerConfig {
 class KafkaSystemMessagesConsumer(
     private val deserializer: KafkaSystemMessageDeserializer,
     private val collectionService: CollectionService,
+    private val commandsProducer: KafkaCommandsSynchronizationProducer,
+    private val commandsStorage: CommandsStorage
 ) {
     @KafkaListener(topics = ["SYSTEM"], groupId = "InvokerService")
     suspend fun receiveMessage(consumerRecord: ConsumerRecord<String, String>) {
         val message = deserializer.deserialize("SYSTEM", consumerRecord.value().toString().toByteArray())
         println(message)
 
-        if (message.service == KafkaServices.FILE_SERVICE) {
+        if (message.service == KafkaServices.FILE_SERVICE || message.theme == KafkaSystemThemes.COLLECTION_READY) {
             collectionService.getCollection()
+        }
+
+        if (message.service == KafkaServices.INVOKER_SERVICE) {
+            commandsProducer.sendEvent(KafkaCommandsSynchronizationDto(commandsStorage.getAllCommands()))
         }
     }
 }

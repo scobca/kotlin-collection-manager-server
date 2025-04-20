@@ -5,6 +5,7 @@ import org.itmo.invokerservice.kafka.enums.KafkaServices
 import org.itmo.invokerservice.kafka.enums.KafkaSystemThemes
 import org.itmo.invokerservice.serializers.KafkaServicesSerializer
 import org.itmo.invokerservice.serializers.KafkaSystemThemesSerializer
+import org.itmo.invokerservice.services.dto.CommandInfoDto
 
 @Serializable
 sealed class SerializableDto
@@ -23,4 +24,9 @@ data class KafkaSystemMessageDto (
 @Serializable
 data class KafkaCollectionUpdateDto (
     val message: String
+) : SerializableDto()
+
+@Serializable
+data class KafkaCommandsSynchronizationDto(
+    val commands: List<CommandInfoDto>
 ) : SerializableDto()

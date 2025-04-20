@@ -4,6 +4,8 @@ import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.apache.kafka.common.serialization.StringDeserializer
 import org.itmo.fileservice.kafka.dto.KafkaSystemMessageDto
+import org.itmo.fileservice.kafka.enums.KafkaServices
+import org.itmo.fileservice.kafka.enums.KafkaSystemThemes
 import org.itmo.fileservice.serializers.KafkaSystemMessageDeserializer
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -26,12 +28,20 @@ class KafkaConsumerConfig {
 }
 
 @Service
-class KafkaSystemMessagesConsumer(private val deserializer: KafkaSystemMessageDeserializer) {
+class KafkaSystemMessagesConsumer(
+    private val deserializer: KafkaSystemMessageDeserializer,
+    private val systemProducer: KafkaSystemProducer,
+) {
     @KafkaListener(topics = ["SYSTEM"], groupId = "FileService")
-    fun receiveMessage(consumerRecord: ConsumerRecord<String, String>): KafkaSystemMessageDto {
+    fun receiveMessage(consumerRecord: ConsumerRecord<String, String>) {
         val message = deserializer.deserialize("SYSTEM", consumerRecord.value().toString().toByteArray())
-        println(message)
 
-        return message
+        if (message.service == KafkaServices.COLLECTION_SERVICE) {
+            systemProducer.sendEvent(KafkaSystemMessageDto(
+                KafkaSystemThemes.COLLECTION_READY,
+                KafkaServices.FILE_SERVICE,
+                "Collection ready for copying"
+            ))
+        }
     }
 }

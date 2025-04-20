@@ -4,9 +4,14 @@ import org.itmo.collectionservice.annotations.CommandDescription
 import org.itmo.collectionservice.annotations.CommandEndpoint
 import org.itmo.collectionservice.collection.items.Flat
 import org.itmo.collectionservice.controllers.dto.ReplaceIfLowerDto
+import org.itmo.collectionservice.parser.dto.FlatDto
+import org.itmo.collectionservice.parser.toFlat
 import org.itmo.collectionservice.services.CommandHttpResponse
 import org.itmo.collectionservice.services.CommandService
+import org.itmo.collectionservice.services.FlatsResponse
+import org.itmo.collectionservice.services.NameRequest
 import org.itmo.collectionservice.services.dto.CollectionInfoDto
+import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -41,15 +46,22 @@ class CollectionController(private val commandService: CommandService) {
     @CommandEndpoint
     @CommandDescription("Adds a new element with the specified key")
     @PostMapping("/insert")
-    fun insert(@RequestBody flat: Flat): CommandHttpResponse<String> {
-        return commandService.insert(flat)
+    fun insert(@RequestBody flatDto: FlatDto): CommandHttpResponse<String> {
+        val flat = getElementById(flatDto.id)
+
+        if (flat.status == HttpStatus.OK.value()) return CommandHttpResponse(
+            HttpStatus.CONFLICT.value(),
+            "Flat with this ID already exists"
+        )
+
+        return commandService.insert(flatDto.toFlat())
     }
 
     @CommandEndpoint
     @CommandDescription("Updates the command by it's Id")
     @PostMapping("/update")
-    fun update(@RequestBody flat: Flat): CommandHttpResponse<String> {
-        return commandService.update(flat)
+    fun update(@RequestBody flatDto: FlatDto): CommandHttpResponse<String> {
+        return commandService.update(flatDto.toFlat())
     }
 
     @CommandEndpoint
@@ -97,7 +109,7 @@ class CollectionController(private val commandService: CommandService) {
     @CommandEndpoint
     @CommandDescription("Return all flats, which name contains similar word from key")
     @PostMapping("/filterContainsName")
-    fun filterContainsName(@RequestBody name: String): CommandHttpResponse<MutableList<Flat>> {
-        return commandService.filterContainsName(name)
+    fun filterContainsName(@RequestBody data: NameRequest): CommandHttpResponse<FlatsResponse> {
+        return commandService.filterContainsName(data)
     }
 }

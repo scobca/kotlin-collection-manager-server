@@ -18,9 +18,9 @@ class KafkaConfig {
     }
 
     @Bean
-    fun collectionChanges(): NewTopic {
+    fun commandsSynchronization(): NewTopic {
         return TopicBuilder
-            .name(KafkaEvents.COLLECTION_UPDATE.name)
+            .name(KafkaEvents.COMMANDS_SYNCHRONIZATION.name)
             .partitions(3)
             .replicas(1)
             .build()

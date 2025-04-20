@@ -6,6 +6,7 @@ import org.itmo.collectionservice.kafka.enums.KafkaSystemThemes
 import org.itmo.collectionservice.parser.dto.FlatDto
 import org.itmo.collectionservice.serializers.KafkaServicesSerializer
 import org.itmo.collectionservice.serializers.KafkaSystemThemesSerializer
+import org.itmo.collectionservice.services.dto.CommandInfoDto
 
 @Serializable
 sealed class SerializableDto
@@ -24,4 +25,9 @@ data class KafkaSystemMessageDto (
 @Serializable
 data class KafkaCollectionUpdateDto (
     val flats: List<FlatDto>,
+) : SerializableDto()
+
+@Serializable
+data class KafkaCommandsSynchronizationDto(
+    val commands: List<CommandInfoDto>
 ) : SerializableDto()

@@ -1,8 +1,8 @@
 package org.itmo.collectionservice.controllers.dto
 
-import org.itmo.collectionservice.collection.items.Flat
+import org.itmo.collectionservice.parser.dto.FlatDto
 
 data class ReplaceIfLowerDto(
     val id: Long,
-    val flat: Flat
+    val flatDto: FlatDto
 )
