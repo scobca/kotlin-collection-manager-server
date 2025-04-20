@@ -1,7 +1,5 @@
 package org.itmo.fileservice.utils
 
-import java.io.File
-
 object GlobalStorage {
     private var databaseFilename: String = ""
     private var lastSaveIndex: Long = 0
