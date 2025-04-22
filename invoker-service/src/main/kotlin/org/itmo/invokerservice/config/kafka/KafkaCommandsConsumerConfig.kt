@@ -1,4 +1,4 @@
-package org.itmo.invokerservice.config
+package org.itmo.invokerservice.config.kafka
 
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.clients.consumer.ConsumerRecord

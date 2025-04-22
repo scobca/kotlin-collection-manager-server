@@ -1,10 +1,9 @@
-package org.itmo.invokerservice.config
+package org.itmo.invokerservice.config.kafka
 
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.apache.kafka.common.serialization.StringDeserializer
 import org.itmo.invokerservice.kafka.dto.KafkaSystemMessageDto
-import org.itmo.invokerservice.kafka.enums.KafkaServices
 import org.itmo.invokerservice.serializers.KafkaSystemMessageDeserializer
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration

@@ -1,4 +1,4 @@
-package org.itmo.invokerservice.config
+package org.itmo.invokerservice.config.kafka
 
 import org.apache.kafka.clients.admin.NewTopic
 import org.itmo.invokerservice.kafka.enums.KafkaEvents
