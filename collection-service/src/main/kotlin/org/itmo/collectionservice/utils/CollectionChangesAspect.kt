@@ -11,6 +11,5 @@ class CollectionChangesAspect(private val collectionChangesStrategy: CollectionC
     @After("@annotation(org.itmo.collectionservice.annotations.ChangingCollection)")
     fun sendCollectionChanges() {
         collectionChangesStrategy.onCollectionUpdate()
-        println("Collection changes sent successfully")
     }
 }
