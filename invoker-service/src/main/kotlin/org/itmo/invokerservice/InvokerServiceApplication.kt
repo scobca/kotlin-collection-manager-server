@@ -1,9 +1,10 @@
 package org.itmo.invokerservice
 
-import org.itmo.invokerservice.config.KafkaSystemProducer
+import org.itmo.invokerservice.config.kafka.KafkaSystemProducer
 import org.itmo.invokerservice.kafka.dto.KafkaSystemMessageDto
 import org.itmo.invokerservice.kafka.enums.KafkaServices
 import org.itmo.invokerservice.kafka.enums.KafkaSystemThemes
+import org.itmo.invokerservice.utils.TcpServerFactory
 import org.springframework.boot.CommandLineRunner
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
@@ -18,6 +19,8 @@ class InvokerServiceApplication(private val kafkaSystemProducer: KafkaSystemProd
                 null
             )
         )
+
+        TcpServerFactory.startTcpServer()
     }
 }
 
