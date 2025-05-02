@@ -43,6 +43,7 @@ dependencies {
     runtimeOnly("io.micrometer:micrometer-registry-prometheus")
 
     //Kotlinx coroutines
+    implementation("io.netty:netty-resolver-dns-native-macos:4.1.77.Final:osx-aarch_64")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
     implementation("io.projectreactor.kotlin:reactor-kotlin-extensions")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
