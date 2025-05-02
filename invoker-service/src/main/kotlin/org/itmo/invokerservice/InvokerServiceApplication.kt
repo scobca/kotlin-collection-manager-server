@@ -10,7 +10,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 
 @SpringBootApplication
-class InvokerServiceApplication(private val kafkaSystemProducer: KafkaSystemProducer) : CommandLineRunner {
+class InvokerServiceApplication(
+    private val kafkaSystemProducer: KafkaSystemProducer,
+    private val tcpServerFactory: TcpServerFactory
+) : CommandLineRunner {
     override fun run(vararg args: String?) {
         kafkaSystemProducer.sendEvent(
             KafkaSystemMessageDto(
@@ -20,7 +23,7 @@ class InvokerServiceApplication(private val kafkaSystemProducer: KafkaSystemProd
             )
         )
 
-        TcpServerFactory.startTcpServer()
+        tcpServerFactory.startTcpServer()
     }
 }
 
