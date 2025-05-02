@@ -36,6 +36,7 @@ class InvokerService(
             val response = webClient
                 .post()
                 .uri("/collection/${command}")
+                .bodyValue(args)
                 .retrieve()
                 .awaitBody<Any>() as WebResponse
 

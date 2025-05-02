@@ -24,14 +24,10 @@ data class FlatsResponse(
     val flats: List<FlatDto>
 )
 
-data class NameRequest(
-    val name: String,
-)
-
 @Service
 class CommandService(@Autowired private val collection: Collection) {
-    fun getElementById(id: Long): CommandHttpResponse<*> {
-        val flat = collection[id]
+    fun getElementById(id: String): CommandHttpResponse<*> {
+        val flat = collection[id.toLong()]
         return if (flat != null) {
             CommandHttpResponse(HttpStatus.OK.value(), flat)
         } else {
@@ -79,11 +75,11 @@ class CommandService(@Autowired private val collection: Collection) {
     }
 
     @ChangingCollection
-    fun remove(flatId: Long): CommandHttpResponse<String> {
-        val flat = collection.getFlats()[flatId]
+    fun remove(flatId: String): CommandHttpResponse<String> {
+        val flat = collection.getFlats()[flatId.toLong()]
 
         if (flat != null) {
-            collection.getFlats().remove(flatId)
+            collection.getFlats().remove(flatId.toLong())
             return CommandHttpResponse(HttpStatus.OK.value(), "Flat removed")
         } else {
             return CommandHttpResponse(HttpStatus.NOT_FOUND.value(), "Flat not found")
@@ -91,17 +87,17 @@ class CommandService(@Autowired private val collection: Collection) {
     }
 
     @ChangingCollection
-    fun removeIfLowerKey(id: Long): CommandHttpResponse<String> {
+    fun removeIfLowerKey(id: String): CommandHttpResponse<String> {
         val flats = collection.getFlats()
         val removableFlats = mutableListOf<Long>()
 
         flats.forEach { flat ->
-            if (flat.key < id) {
+            if (flat.key < id.toLong()) {
                 removableFlats.add(flat.key)
             }
         }
 
-        removableFlats.forEach { flat -> remove(flat) }
+        removableFlats.forEach { flat -> remove(flat.toString()) }
 
         return CommandHttpResponse(HttpStatus.OK.value(), "Flats removed by lower ID")
     }
@@ -117,7 +113,7 @@ class CommandService(@Autowired private val collection: Collection) {
             }
         }
 
-        removableFlats.forEach { flat -> remove(flat) }
+        removableFlats.forEach { flat -> remove(flat.toString()) }
 
         return CommandHttpResponse(HttpStatus.OK.value(), "Flats removed by balcony")
     }
@@ -155,14 +151,14 @@ class CommandService(@Autowired private val collection: Collection) {
         }
     }
 
-    fun filterContainsName(data: NameRequest): CommandHttpResponse<FlatsResponse> {
+    fun filterContainsName(data: String): CommandHttpResponse<FlatsResponse> {
         val flats = collection.getFlats()
 
         val response = mutableListOf<FlatDto>()
 
         flats.forEach { flat ->
             if (flat.value.getName() != null) {
-                if (flat.value.getName()!!.trim().contains(data.name.trim(), ignoreCase = true)) {
+                if (flat.value.getName()!!.trim().contains(data.trim(), ignoreCase = true)) {
                     response.add(flat.value.toSerializable())
                 }
             }

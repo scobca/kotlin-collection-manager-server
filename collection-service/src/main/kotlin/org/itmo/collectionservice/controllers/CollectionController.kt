@@ -9,7 +9,6 @@ import org.itmo.collectionservice.parser.toFlat
 import org.itmo.collectionservice.services.CommandHttpResponse
 import org.itmo.collectionservice.services.CommandService
 import org.itmo.collectionservice.services.FlatsResponse
-import org.itmo.collectionservice.services.NameRequest
 import org.itmo.collectionservice.services.dto.CollectionInfoDto
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.PostMapping
@@ -25,7 +24,7 @@ class CollectionController(private val commandService: CommandService) {
     @CommandEndpoint
     @CommandDescription("Return collection element by it ID")
     @PostMapping("/getElementById")
-    fun getElementById(@RequestBody id: Long): CommandHttpResponse<*> {
+    fun getElementById(@RequestBody id: String): CommandHttpResponse<*> {
         return commandService.getElementById(id)
     }
 
@@ -47,7 +46,7 @@ class CollectionController(private val commandService: CommandService) {
     @CommandDescription("Adds a new element with the specified key")
     @PostMapping("/insert")
     fun insert(@RequestBody flatDto: FlatDto): CommandHttpResponse<String> {
-        val flat = getElementById(flatDto.id)
+        val flat = getElementById(flatDto.id.toString())
 
         if (flat.status == HttpStatus.OK.value()) return CommandHttpResponse(
             HttpStatus.CONFLICT.value(),
@@ -67,14 +66,14 @@ class CollectionController(private val commandService: CommandService) {
     @CommandEndpoint
     @CommandDescription("Removes an element by it Id")
     @PostMapping("/remove")
-    fun remove(@RequestBody flatId: Long): CommandHttpResponse<String> {
+    fun remove(@RequestBody flatId: String): CommandHttpResponse<String> {
         return commandService.remove(flatId)
     }
 
     @CommandEndpoint
     @CommandDescription("Remove all flats with id lower than arguments id")
     @PostMapping("/removeIfLowerKey")
-    fun removeIfLowerKey(@RequestBody id: Long): CommandHttpResponse<String> {
+    fun removeIfLowerKey(@RequestBody id: String): CommandHttpResponse<String> {
         return commandService.removeIfLowerKey(id)
     }
 
@@ -109,7 +108,7 @@ class CollectionController(private val commandService: CommandService) {
     @CommandEndpoint
     @CommandDescription("Return all flats, which name contains similar word from key")
     @PostMapping("/filterContainsName")
-    fun filterContainsName(@RequestBody data: NameRequest): CommandHttpResponse<FlatsResponse> {
+    fun filterContainsName(@RequestBody data: String): CommandHttpResponse<FlatsResponse> {
         return commandService.filterContainsName(data)
     }
 }
