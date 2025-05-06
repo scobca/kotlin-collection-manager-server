@@ -4,5 +4,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 enum class KafkaSystemThemes {
-    SERVICE_STARTED
+    SERVICE_STARTED,
+    COLLECTION_READY
 }

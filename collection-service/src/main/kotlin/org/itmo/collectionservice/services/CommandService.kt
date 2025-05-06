@@ -6,7 +6,6 @@ import org.itmo.collectionservice.collection.Collection
 import org.itmo.collectionservice.collection.items.Flat
 import org.itmo.collectionservice.controllers.dto.ReplaceIfLowerDto
 import org.itmo.collectionservice.parser.dto.FlatDto
-import org.itmo.collectionservice.parser.toFlat
 import org.itmo.collectionservice.parser.toSerializable
 import org.itmo.collectionservice.services.dto.CollectionInfoDto
 import org.springframework.beans.factory.annotation.Autowired
@@ -26,10 +25,16 @@ data class FlatsResponse(
 
 @Service
 class CommandService(@Autowired private val collection: Collection) {
-    fun getElementById(id: String): CommandHttpResponse<*> {
+    fun getElementById(id: String): Any {
         val flat = collection[id.toLong()]
         return if (flat != null) {
-            CommandHttpResponse(HttpStatus.OK.value(), flat)
+            return "[${flat.getId()},${flat.getHouse()?.getName()},${
+                flat.getCoordinates()?.getX()
+            },${
+                flat.getCoordinates()?.getY()
+            },${flat.getArea()},${flat.getNumberOfRooms()},${flat.getPrice()},${flat.getBalcony()},${flat.getFurnish()},${
+                flat.getHouse()?.getName()
+            },${flat.getHouse()?.getYear()},${flat.getHouse()?.getNumberOfFloors()}]"
         } else {
             CommandHttpResponse(HttpStatus.NOT_FOUND.value(), "Flat with id $id not found")
         }
@@ -40,7 +45,7 @@ class CommandService(@Autowired private val collection: Collection) {
         var flatsDto = mutableListOf<FlatDto>()
         val flats = collection.getFlats()
 
-        flats.forEach { flat -> flatsDto.add(flat.value.toSerializable())}
+        flats.forEach { flat -> flatsDto.add(flat.value.toSerializable()) }
 
         return CollectionInfoDto(
             collection.getFlats()::class.simpleName.toString(),
@@ -129,11 +134,16 @@ class CommandService(@Autowired private val collection: Collection) {
     @ChangingCollection
     fun replaceIfLower(body: ReplaceIfLowerDto): CommandHttpResponse<String> {
         val comparableFlat = collection.getFlats()[body.id]
+        println(comparableFlat)
 
-        if (comparableFlat != null && comparableFlat < body.flatDto.toFlat()) {
-            collection[body.id] = body.flatDto.toFlat()
-            return CommandHttpResponse(HttpStatus.OK.value(), "Flat replaced successfully")
-        } else return CommandHttpResponse(HttpStatus.BAD_REQUEST.value(), "Flat replaced failed")
+        if (comparableFlat == null) {
+            return CommandHttpResponse(HttpStatus.NOT_FOUND.value(), "Comparable flat not found")
+        } else {
+            if (comparableFlat < body.flatDto) {
+                collection[body.id] = body.flatDto
+                return CommandHttpResponse(HttpStatus.OK.value(), "Flat replaced successfully")
+            } else return CommandHttpResponse(HttpStatus.BAD_REQUEST.value(), "Flat replaced failed")
+        }
     }
 
     fun getAveragePrice(): CommandHttpResponse<String> {

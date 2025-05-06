@@ -1,6 +1,5 @@
 package org.itmo.invokerservice.services
 
-import org.itmo.invokerservice.services.dto.WebResponse
 import org.itmo.invokerservice.storages.CommandsStorage
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
@@ -22,15 +21,29 @@ class InvokerService(
             return commandsList
         }
 
-        if (commandsList?.contains(command) == true) {
-            val response = webClient
-                .post()
-                .uri("/collection/${command}")
-                .bodyValue(args)
-                .retrieve()
-                .awaitBody<Any>() as WebResponse
+        println(args)
 
-            return response.message.toString()
+        if (commandsList?.contains(command) == true || command == "getElementById") {
+            try {
+                return if (!args.isEmpty()) {
+                    webClient
+                        .post()
+                        .uri("/collection/${command}")
+                        .bodyValue(args.last())
+                        .retrieve()
+                        .awaitBody<String>()
+                } else {
+                    webClient
+                        .post()
+                        .uri("/collection/${command}")
+                        .bodyValue(args)
+                        .retrieve()
+                        .awaitBody<Any>()
+                }
+
+            } catch (e: Exception) {
+                return e.message
+            }
         } else {
             return "Command $command not found"
         }

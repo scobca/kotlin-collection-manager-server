@@ -23,7 +23,7 @@ class CollectionController(private val commandService: CommandService) {
     @CommandEndpoint
     @CommandDescription("Return collection element by it ID")
     @PostMapping("/getElementById")
-    fun getElementById(@RequestBody id: String): CommandHttpResponse<*> {
+    fun getElementById(@RequestBody id: String): Any {
         return commandService.getElementById(id)
     }
 
@@ -50,7 +50,7 @@ class CollectionController(private val commandService: CommandService) {
 
             val oldFlat = getElementById(flat.getId().toString())
 
-            if (oldFlat.status == HttpStatus.OK.value()) return CommandHttpResponse(
+            if (oldFlat.toString().contains("[")) return CommandHttpResponse(
                 HttpStatus.CONFLICT.value(),
                 "Flat with this ID already exists"
             )
@@ -104,9 +104,16 @@ class CollectionController(private val commandService: CommandService) {
 
     @CommandEndpoint
     @CommandDescription("Replace a flat from a collection if it lower than new flat")
-    @PostMapping("replaceIfLower")
-    fun replaceIfLower(@RequestBody body: ReplaceIfLowerDto): CommandHttpResponse<String> {
-        return commandService.replaceIfLower(body)
+    @PostMapping("/replaceIfLower")
+    fun replaceIfLower(@RequestBody bodyString: String): CommandHttpResponse<String> {
+        try {
+            val flat = StringToFlatParser.parseToFlat(bodyString)
+            val body = ReplaceIfLowerDto(flat.getId(), flat)
+
+            return commandService.replaceIfLower(body)
+        } catch (e: Exception) {
+            return CommandHttpResponse(HttpStatus.CONFLICT.value(), e.message.toString())
+        }
     }
 
     @CommandEndpoint
