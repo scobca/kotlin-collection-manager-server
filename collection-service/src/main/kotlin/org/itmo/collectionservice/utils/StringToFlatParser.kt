@@ -7,7 +7,6 @@ import org.itmo.collectionservice.collection.items.House
 
 object StringToFlatParser {
     fun parseToFlat(input: String): Flat {
-        // [1,name,1,123,212,12,10000,true,little,house1,2000,12]
 
         val data = input.replace("[", "").replace("]", "").split(",")
 

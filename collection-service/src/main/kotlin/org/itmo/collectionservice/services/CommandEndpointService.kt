@@ -20,42 +20,37 @@ class CommandEndpointService(
     fun getApiEndpoint() {
         val controllers = applicationContext.getBeansWithAnnotation(RestController::class.java)
 
-        controllers.values.forEach { controller ->
-            controller.javaClass.methods.forEach { method ->
-                if (
-                    method.isAnnotationPresent(CommandEndpoint::class.java) && method.isAnnotationPresent(
-                        CommandDescription::class.java
-                    )
-                ) {
-                    when {
-                        method.isAnnotationPresent(GetMapping::class.java) -> {
-                            val commandEndpoint = method.getAnnotation(GetMapping::class.java)
-                            val description = method.getAnnotation(CommandDescription::class.java).description
-                            commandsStorage.addCommand(CommandInfoDto(commandEndpoint.value.first().substring(1), description))
-                        }
-
-                        method.isAnnotationPresent(PostMapping::class.java) -> {
-                            val commandEndpoint = method.getAnnotation(PostMapping::class.java)
-                            val description = method.getAnnotation(CommandDescription::class.java).description
-                            commandsStorage.addCommand(CommandInfoDto(commandEndpoint.value.first().substring(1), description))
-                        }
-
-                        method.isAnnotationPresent(PatchMapping::class.java) -> {
-                            val commandEndpoint = method.getAnnotation(PatchMapping::class.java)
-                            val description = method.getAnnotation(CommandDescription::class.java).description
-                            commandsStorage.addCommand(CommandInfoDto(commandEndpoint.value.first().substring(1), description))
-                        }
-
-                        method.isAnnotationPresent(DeleteMapping::class.java) -> {
-                            val commandEndpoint = method.getAnnotation(DeleteMapping::class.java)
-                            val description = method.getAnnotation(CommandDescription::class.java).description
-                            commandsStorage.addCommand(CommandInfoDto(commandEndpoint.value.first().substring(1), description))
-                        }
-
-                        else -> null
+        controllers.values
+            .flatMap { controller ->
+                controller.javaClass.methods.asSequence()
+                    .filter { method ->
+                        method.isAnnotationPresent(CommandEndpoint::class.java) &&
+                                method.isAnnotationPresent(CommandDescription::class.java)
                     }
-                }
+                    .mapNotNull { method ->
+                        val description = method.getAnnotation(CommandDescription::class.java).description
+
+                        val commandPath = when {
+                            method.isAnnotationPresent(GetMapping::class.java) ->
+                                method.getAnnotation(GetMapping::class.java).value.firstOrNull()
+                            method.isAnnotationPresent(PostMapping::class.java) ->
+                                method.getAnnotation(PostMapping::class.java).value.firstOrNull()
+                            method.isAnnotationPresent(PatchMapping::class.java) ->
+                                method.getAnnotation(PatchMapping::class.java).value.firstOrNull()
+                            method.isAnnotationPresent(DeleteMapping::class.java) ->
+                                method.getAnnotation(DeleteMapping::class.java).value.firstOrNull()
+                            else -> null
+                        }
+
+                        commandPath?.let { path ->
+                            CommandInfoDto(path.removePrefix("/"), description)
+                        }
+                    }
+                    .toList()
             }
-        }
+            .forEach { commandInfo ->
+                commandsStorage.addCommand(commandInfo)
+            }
     }
+
 }

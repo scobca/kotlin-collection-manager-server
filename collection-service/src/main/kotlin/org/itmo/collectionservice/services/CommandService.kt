@@ -42,22 +42,17 @@ class CommandService(@Autowired private val collection: Collection) {
     }
 
     fun info(): CollectionInfoDto {
-        var flatsDto = mutableListOf<FlatDto>()
-        val flats = collection.getFlats()
-
-        flats.forEach { flat -> flatsDto.add(flat.value.toSerializable()) }
-
+        val flatsDto = collection.getFlats().values.map { it.toSerializable() }
         return CollectionInfoDto(
             collection.getFlats()::class.simpleName.toString(),
             collection.getInitDate().toString(),
             flatsDto,
-            collection.getFlats().size
+            flatsDto.size
         )
     }
 
     fun show(): CommandHttpResponse<TreeMap<Long, Flat>> {
-        val flats = collection.getFlats()
-        return CommandHttpResponse<TreeMap<Long, Flat>>(HttpStatus.OK.value(), flats)
+        return CommandHttpResponse<TreeMap<Long, Flat>>(HttpStatus.OK.value(), collection.getFlats())
     }
 
     @ChangingCollection
@@ -94,32 +89,21 @@ class CommandService(@Autowired private val collection: Collection) {
 
     @ChangingCollection
     fun removeIfLowerKey(id: String): CommandHttpResponse<String> {
-        val flats = collection.getFlats()
-        val removableFlats = mutableListOf<Long>()
-
-        flats.forEach { flat ->
-            if (flat.key < id.toLong()) {
-                removableFlats.add(flat.key)
-            }
-        }
-
-        removableFlats.forEach { flat -> remove(flat.toString()) }
+        val targetId = id.toLong()
+        collection.getFlats()
+            .keys
+            .filter { it < targetId }
+            .forEach { remove(it.toString()) }
 
         return CommandHttpResponse(HttpStatus.OK.value(), "Flats removed by lower ID")
     }
 
     @ChangingCollection
     fun removeAllByBalcony(bool: String): CommandHttpResponse<String> {
-        val flats = collection.getFlats()
-        val removableFlats = mutableListOf<Long>()
-
-        flats.forEach { flat ->
-            if (flat.value.getBalcony().toString() == bool) {
-                removableFlats.add(flat.key)
-            }
-        }
-
-        removableFlats.forEach { flat -> remove(flat.toString()) }
+        collection.getFlats()
+            .filter { it.value.getBalcony().toString() == bool }
+            .keys
+            .forEach { remove(it.toString()) }
 
         return CommandHttpResponse(HttpStatus.OK.value(), "Flats removed by balcony")
     }
@@ -134,47 +118,35 @@ class CommandService(@Autowired private val collection: Collection) {
     @ChangingCollection
     fun replaceIfLower(body: ReplaceIfLowerDto): CommandHttpResponse<String> {
         val comparableFlat = collection.getFlats()[body.id]
-        println(comparableFlat)
-
-        if (comparableFlat == null) {
-            return CommandHttpResponse(HttpStatus.NOT_FOUND.value(), "Comparable flat not found")
-        } else {
-            if (comparableFlat < body.flatDto) {
+        return comparableFlat?.let {
+            if (it < body.flatDto) {
                 collection[body.id] = body.flatDto
-                return CommandHttpResponse(HttpStatus.OK.value(), "Flat replaced successfully")
-            } else return CommandHttpResponse(HttpStatus.BAD_REQUEST.value(), "Flat replaced failed")
-        }
+                CommandHttpResponse(HttpStatus.OK.value(), "Flat replaced successfully")
+            } else {
+                CommandHttpResponse(HttpStatus.BAD_REQUEST.value(), "Flat replaced failed")
+            }
+        } ?: CommandHttpResponse(HttpStatus.NOT_FOUND.value(), "Comparable flat not found")
     }
 
     fun getAveragePrice(): CommandHttpResponse<String> {
-        var allPrices: Long = 0
-        val flatsCount = collection.getFlats().size
+        val flats = collection.getFlats().values
+        val prices = flats.mapNotNull { it.getPrice() }
 
-        if (flatsCount > 0) {
-            collection.getFlats().forEach { flat ->
-                if (flat.value.getPrice() != null) {
-                    allPrices += flat.value.getPrice()!!
-                }
-            }
-            return CommandHttpResponse(HttpStatus.OK.value(), "Average price for flats: ${allPrices / flatsCount}")
+        return if (prices.isNotEmpty()) {
+            val average = prices.average()
+            CommandHttpResponse(HttpStatus.OK.value(), "Average price for flats: ${average.toLong()}")
         } else {
-            return CommandHttpResponse(HttpStatus.NOT_FOUND.value(), "No flats available. Cannot get the average price")
+            CommandHttpResponse(HttpStatus.NOT_FOUND.value(), "No flats available. Cannot get the average price")
         }
     }
 
     fun filterContainsName(data: String): CommandHttpResponse<FlatsResponse> {
         val flats = collection.getFlats()
 
-        val response = mutableListOf<FlatDto>()
+        val response = flats.values
+            .filter { it.getName()?.contains(data.trim(), ignoreCase = true) == true }
+            .map { it.toSerializable() }
 
-        flats.forEach { flat ->
-            if (flat.value.getName() != null) {
-                if (flat.value.getName()!!.trim().contains(data.trim(), ignoreCase = true)) {
-                    response.add(flat.value.toSerializable())
-                }
-            }
-        }
-
-        return CommandHttpResponse(HttpStatus.OK.value(), FlatsResponse(response.toList()))
+        return CommandHttpResponse(HttpStatus.OK.value(), FlatsResponse(response))
     }
 }
