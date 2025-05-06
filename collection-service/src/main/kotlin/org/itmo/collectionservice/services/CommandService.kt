@@ -70,7 +70,8 @@ class CommandService(@Autowired private val collection: Collection) {
             collection.getFlats()[flat.getId()] = flat
             return CommandHttpResponse(HttpStatus.OK.value(), "Flat updated")
         } else {
-            return CommandHttpResponse(HttpStatus.NOT_FOUND.value(), "Flat not found")
+            insert(flat)
+            return CommandHttpResponse(HttpStatus.OK.value(), "Flat created")
         }
     }
 
