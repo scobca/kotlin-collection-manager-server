@@ -1,5 +1,7 @@
 package org.itmo.fileservice.utils
 
+import java.io.File
+
 object GlobalStorage {
     private var databaseFilename: String = ""
     private var lastSaveIndex: Long = 0
@@ -10,17 +12,30 @@ object GlobalStorage {
     }
 
     private fun setLastSaveIndex() {
-        if (databaseFilename.contains(Regex("_version*"))) {
-            val index = databaseFilename.split("_").last().substring(7).toLong()
-            lastSaveIndex = index
-        } else lastSaveIndex = 0
+        val baseName = databaseFilename.removeSuffix(".json")
+        val directory = File(".")
+
+        if (!directory.exists() || !directory.isDirectory) {
+            lastSaveIndex = 0
+            return
+        }
+
+        val regex = Regex(Regex.escape(baseName) + "_version(\\d+)\\.json")
+
+        lastSaveIndex = directory.listFiles()
+            ?.mapNotNull { file ->
+                val match = regex.matchEntire(file.name)
+                match?.groupValues?.get(1)?.toLongOrNull()
+            }
+            ?.maxOrNull() ?: 0
+
+        println("$lastSaveIndex sdlksldkl")
     }
 
     fun getNewSaveFilename(): String {
         lastSaveIndex++
-
-        val fileExtension = databaseFilename.split(".").last()
-        return databaseFilename.split(".").dropLast(1).joinToString(".") + "_version$lastSaveIndex" + ".$fileExtension"
+        val baseName = databaseFilename.removeSuffix(".json")
+        return "${baseName}_version${lastSaveIndex}.json"
     }
 
     fun getDatabaseFilename(): String {
