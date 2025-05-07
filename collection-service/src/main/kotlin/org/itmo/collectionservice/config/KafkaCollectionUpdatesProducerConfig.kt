@@ -34,6 +34,5 @@ class KafkaCollectionUpdatedProducerConfig {
 class KafkaCollectionUpdatesProducer(private val kafkaNewTopicTemplate: KafkaTemplate<String, KafkaCollectionUpdateDto>) {
     fun sendEvent(message: KafkaCollectionUpdateDto) {
         kafkaNewTopicTemplate.send("COLLECTION_UPDATE", message)
-        println("Produced event in COLLECTION_UPDATE")
     }
 }

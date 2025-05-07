@@ -9,11 +9,8 @@ class CommandsStorage {
 
     fun setCommands(commands: List<CommandInfoDto>) {
         commands.forEach { cmd ->
-            println(cmd)
             commandsList?.set(cmd.endpoint, cmd.description)
         }
-
-        println(getAllCommands())
     }
 
     fun getAllCommands(): MutableMap<String, String>? = this.commandsList

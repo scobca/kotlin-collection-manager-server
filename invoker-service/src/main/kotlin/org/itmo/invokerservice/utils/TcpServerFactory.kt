@@ -26,7 +26,6 @@ class TcpServerFactory(private val invokerService: InvokerService) {
                 val message = input.readLine()
                 val response = invokerService.handleCommand(message)
 
-                output.println(response)
 
                 socket.close()
             }

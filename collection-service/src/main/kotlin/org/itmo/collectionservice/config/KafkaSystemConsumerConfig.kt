@@ -38,7 +38,6 @@ class KafkaSystemMessagesConsumer(
     @KafkaListener(topics = ["SYSTEM"], groupId = "InvokerService")
     suspend fun receiveMessage(consumerRecord: ConsumerRecord<String, String>) {
         val message = deserializer.deserialize("SYSTEM", consumerRecord.value().toString().toByteArray())
-        println(message)
 
         if (message.service == KafkaServices.FILE_SERVICE || message.theme == KafkaSystemThemes.COLLECTION_READY) {
             collectionService.getCollection()

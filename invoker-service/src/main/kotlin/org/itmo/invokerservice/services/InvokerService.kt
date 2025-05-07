@@ -21,8 +21,6 @@ class InvokerService(
             return commandsList
         }
 
-        println(args)
-
         if (commandsList?.contains(command) == true || command == "getElementById") {
             try {
                 return if (!args.isEmpty()) {

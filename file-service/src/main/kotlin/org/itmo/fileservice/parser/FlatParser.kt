@@ -89,11 +89,9 @@ class FlatParser(
     fun parseToJson(flats: TreeMap<Long, Flat>) {
         val filename = GlobalStorage.getDatabaseFilename()
         val resource = File(filename)
-        println("$filename — filename")
 
         val newFilename = GlobalStorage.getNewSaveFilename()
         val newResource = File(newFilename)
-        println("$newFilename — newFilename")
 
         try {
             if (newResource.exists()) newResource.delete() else newResource.createNewFile()
@@ -110,8 +108,6 @@ class FlatParser(
             FileOutputStream(resource).use { writer ->
                 Json.encodeToStream(flatsJson, writer)
             }
-
-            println("Квартиры успешно сохранены в файл $filename")
         } catch (e: Exception) {
             println("Unexpected error, please try again. Cause: ${e.message}")
         }

@@ -33,6 +33,5 @@ class KafkaSystemProducerConfig {
 class KafkaSystemProducer(private val kafkaTemplate: KafkaTemplate<String, KafkaSystemMessageDto>) {
     fun sendEvent(message: KafkaSystemMessageDto) {
         kafkaTemplate.send("SYSTEM", message)
-        println("Produced event")
     }
 }

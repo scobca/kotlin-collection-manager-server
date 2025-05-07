@@ -9,7 +9,6 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.kafka.core.DefaultKafkaProducerFactory
 import org.springframework.kafka.core.KafkaTemplate
 import org.springframework.kafka.core.ProducerFactory
-import org.springframework.stereotype.Service
 
 @Configuration
 class KafkaCollectionUpdatedProducerConfig {
@@ -26,14 +25,5 @@ class KafkaCollectionUpdatedProducerConfig {
     @Bean
     fun kafkaCollectionUpdatedProducer(): KafkaTemplate<String, KafkaCollectionUpdateDto> {
         return KafkaTemplate(newTopicProducerFactory())
-    }
-}
-
-
-@Service
-class KafkaCollectionUpdatesProducer(private val kafkaNewTopicTemplate: KafkaTemplate<String, KafkaCollectionUpdateDto>) {
-    fun sendEvent(message: KafkaCollectionUpdateDto) {
-        kafkaNewTopicTemplate.send("COLLECTION_UPDATE", message)
-        println("Produced event in COLLECTION_UPDATE")
     }
 }

@@ -37,7 +37,6 @@ class KafkaCommandsSynchronizationConsumer(
         val message =
             deserializer.deserialize("COMMANDS_SYNCHRONIZATION", consumerRecord.value().toString().toByteArray())
 
-        println("Received message: $message")
         commandsStorage.setCommands(message.commands)
     }
 }

@@ -34,7 +34,6 @@ class KafkaCollectionUpdatesConsumer(
     @KafkaListener(topics = ["COLLECTION_UPDATE"], groupId = "FileService")
     fun receiveMessage(consumerRecord: ConsumerRecord<String, String>) {
         val message = deserializer.deserialize("COLLECTION_UPDATE", consumerRecord.value().toString().toByteArray())
-        println(message)
 
         parser.parseFlatsFromKafkaMessage(message.flats)
     }

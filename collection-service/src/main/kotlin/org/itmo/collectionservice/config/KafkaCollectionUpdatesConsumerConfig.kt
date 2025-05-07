@@ -30,7 +30,6 @@ class KafkaCollectionUpdatesConsumer(private val deserializer: KafkaCollectionUp
     @KafkaListener(topics = ["COLLECTION_UPDATE"], groupId = "CollectionService")
     fun receiveMessage(consumerRecord: ConsumerRecord<String, String>): KafkaCollectionUpdateDto {
         val message = deserializer.deserialize("COLLECTION_UPDATE", consumerRecord.value().toString().toByteArray())
-        println(message)
 
         return message
     }
