@@ -1,5 +1,6 @@
 package org.itmo.invokerservice.config.kafka
 
+import io.github.cdimascio.dotenv.Dotenv
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.apache.kafka.common.serialization.StringDeserializer
@@ -15,10 +16,12 @@ import org.springframework.stereotype.Service
 
 @Configuration
 class KafkaCommandsConsumerConfig {
+    private val dotenv: Dotenv = Dotenv.load()
+
     @Bean
     fun kafkaCommandsSynchronizationConsumerFactory(): ConsumerFactory<String, KafkaCommandsSynchronizationDto> {
         val props = HashMap<String, Any>()
-        props[ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG] = "localhost:9091"
+        props[ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG] = dotenv.get("BOOTSTRAP_SERVERS_CONFIG")
         props[ConsumerConfig.GROUP_ID_CONFIG] = "InvokerService"
         props[ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG] = StringDeserializer::class.java
         props[ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG] = KafkaCommandsSynchronizationDeserializer::class.java

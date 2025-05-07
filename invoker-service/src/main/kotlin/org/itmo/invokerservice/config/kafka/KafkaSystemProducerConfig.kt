@@ -1,5 +1,6 @@
 package org.itmo.invokerservice.config.kafka
 
+import io.github.cdimascio.dotenv.Dotenv
 import org.apache.kafka.clients.producer.ProducerConfig
 import org.apache.kafka.common.serialization.StringSerializer
 import org.itmo.invokerservice.kafka.dto.KafkaSystemMessageDto
@@ -13,10 +14,12 @@ import org.springframework.stereotype.Service
 
 @Configuration
 class KafkaSystemProducerConfig {
+    private val dotenv: Dotenv = Dotenv.load()
+
     @Bean
     fun systemProducerFactory(): ProducerFactory<String, KafkaSystemMessageDto> {
         val configProps = mapOf(
-            ProducerConfig.BOOTSTRAP_SERVERS_CONFIG to "localhost:9091",
+            ProducerConfig.BOOTSTRAP_SERVERS_CONFIG to dotenv.get("BOOTSTRAP_SERVERS_CONFIG"),
             ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG to StringSerializer::class.java,
             ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG to KafkaSystemMessageSerializer::class.java,
         )
