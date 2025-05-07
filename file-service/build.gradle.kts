@@ -24,6 +24,7 @@ repositories {
 
 dependencies {
     //Spring
+    implementation("io.github.cdimascio:dotenv-java:2.2.0")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     developmentOnly("org.springframework.boot:spring-boot-devtools")

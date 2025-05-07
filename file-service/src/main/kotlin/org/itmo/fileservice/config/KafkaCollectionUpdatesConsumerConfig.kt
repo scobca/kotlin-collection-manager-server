@@ -1,5 +1,6 @@
 package org.itmo.fileservice.config
 
+import io.github.cdimascio.dotenv.Dotenv
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.apache.kafka.common.serialization.StringDeserializer
@@ -15,10 +16,12 @@ import org.springframework.stereotype.Service
 
 @Configuration
 class KafkaCollectionUpdatesConsumerConfig {
+    private val dotenv: Dotenv = Dotenv.load()
+
     @Bean
     fun kafkaCollectionUpdatesConsumerFactory(): ConsumerFactory<String, KafkaCollectionUpdateDto> {
         val props = HashMap<String, Any>()
-        props[ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG] = "localhost:9091"
+        props[ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG] = dotenv.get("BOOTSTRAP_SERVERS_CONFIG")
         props[ConsumerConfig.GROUP_ID_CONFIG] = "NewTopicGroup"
         props[ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG] = StringDeserializer::class.java
         props[ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG] = KafkaCollectionUpdatesDeserializer::class.java
