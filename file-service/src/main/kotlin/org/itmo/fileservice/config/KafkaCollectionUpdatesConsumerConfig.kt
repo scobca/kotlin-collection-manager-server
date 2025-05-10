@@ -1,12 +1,12 @@
 package org.itmo.fileservice.config
 
-import io.github.cdimascio.dotenv.Dotenv
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.apache.kafka.common.serialization.StringDeserializer
 import org.itmo.fileservice.kafka.dto.KafkaCollectionUpdateDto
 import org.itmo.fileservice.parser.FlatParser
 import org.itmo.fileservice.serializers.KafkaCollectionUpdatesDeserializer
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.kafka.annotation.KafkaListener
@@ -16,12 +16,13 @@ import org.springframework.stereotype.Service
 
 @Configuration
 class KafkaCollectionUpdatesConsumerConfig {
-    private val dotenv: Dotenv = Dotenv.load()
+    @Value("\${spring.kafka.bootstrap-servers}")
+    lateinit var kafkaConfig: String
 
     @Bean
     fun kafkaCollectionUpdatesConsumerFactory(): ConsumerFactory<String, KafkaCollectionUpdateDto> {
         val props = HashMap<String, Any>()
-        props[ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG] = dotenv.get("BOOTSTRAP_SERVERS_CONFIG")
+        props[ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG] = kafkaConfig
         props[ConsumerConfig.GROUP_ID_CONFIG] = "NewTopicGroup"
         props[ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG] = StringDeserializer::class.java
         props[ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG] = KafkaCollectionUpdatesDeserializer::class.java
