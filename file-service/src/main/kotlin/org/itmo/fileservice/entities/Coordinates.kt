@@ -6,6 +6,7 @@ import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.Table
+import org.itmo.fileservice.io.BasicSuccessfulResponse
 
 @Entity
 @Table(name = "coordinates")
@@ -19,4 +20,6 @@ data class Coordinates(
 
     @Column(nullable = false)
     val y: Float,
-)
+) : Convertable<Coordinates> {
+    override fun toHttpResponse(): BasicSuccessfulResponse<Coordinates> = BasicSuccessfulResponse(this)
+}

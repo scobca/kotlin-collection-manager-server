@@ -6,6 +6,7 @@ import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.Table
+import org.itmo.fileservice.io.BasicSuccessfulResponse
 
 @Entity
 @Table(name = "houses")
@@ -22,4 +23,6 @@ data class Houses(
 
     @Column(nullable = false)
     val numberOfFloors: Long,
-)
+) : Convertable<Houses> {
+    override fun toHttpResponse(): BasicSuccessfulResponse<Houses> = BasicSuccessfulResponse(this)
+}

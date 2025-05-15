@@ -16,6 +16,7 @@ import jakarta.persistence.Table
 import org.hibernate.annotations.TimeZoneStorage
 import org.hibernate.annotations.TimeZoneStorageType
 import org.itmo.fileservice.collection.items.Furnish
+import org.itmo.fileservice.io.BasicSuccessfulResponse
 import java.time.ZonedDateTime
 
 @Entity
@@ -63,4 +64,6 @@ data class Flats(
     @TimeZoneStorage(TimeZoneStorageType.NATIVE)
     @Column(nullable = false)
     val createdAt: ZonedDateTime,
-)
+) : Convertable<Flats> {
+    override fun toHttpResponse(): BasicSuccessfulResponse<Flats> = BasicSuccessfulResponse(this)
+}

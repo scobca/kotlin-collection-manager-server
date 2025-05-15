@@ -6,6 +6,7 @@ import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.Table
+import org.itmo.fileservice.io.BasicSuccessfulResponse
 
 @Entity
 @Table(name = "users")
@@ -19,4 +20,6 @@ data class Users(
 
     @Column(nullable = true)
     var password: String,
-)
+) : Convertable<Users> {
+    override fun toHttpResponse(): BasicSuccessfulResponse<Users> = BasicSuccessfulResponse<Users>(this)
+}
