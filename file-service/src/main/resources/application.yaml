@@ -45,3 +45,6 @@ database:
   username: ${POSTGRES_USER}
   password: ${POSTGRES_PASSWORD}
   schema: ${POSTGRES_SCHEMA}
+
+config:
+  password-salt: ${PASSWORD_SALT}
