@@ -8,7 +8,7 @@ import org.springframework.web.reactive.function.client.WebClient
 
 @Configuration
 class WebClientConfig {
-    @Value("\${config.collection-service-host}")
+    @Value("\${config.collection-service.host}")
     private lateinit var collectionServiceConfig: String
 
     @Bean

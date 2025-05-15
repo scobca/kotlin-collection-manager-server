@@ -1,0 +1,40 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: collection-service
+  devtools:
+    livereload:
+      port: 35731
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVICE}
+    consumer:
+      properties:
+        session:
+          timeout:
+            ms: 60000
+        reconnect:
+          backoff:
+            ms: 1000
+            max:
+              ms: 20000
+
+management:
+  server:
+    port: 8081
+  metrics:
+    tags:
+      application: ${spring.application.name}
+  endpoints:
+    prometheus:
+      access: unrestricted
+    web:
+      exposure:
+        include: prometheus,health,info
+
+config:
+  file-service:
+    host: ${FILE_SERVICE_HOST}
+  invoker-service:
+    host: ${INVOKER_SERVICE_HOST}
