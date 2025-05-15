@@ -28,8 +28,6 @@ object GlobalStorage {
                 match?.groupValues?.get(1)?.toLongOrNull()
             }
             ?.maxOrNull() ?: 0
-
-        println("$lastSaveIndex sdlksldkl")
     }
 
     fun getNewSaveFilename(): String {
