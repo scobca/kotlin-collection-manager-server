@@ -5,8 +5,10 @@ import org.itmo.fileservice.utils.GlobalStorage
 import org.springframework.boot.CommandLineRunner
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories
 
 @SpringBootApplication
+@EnableJpaRepositories
 class FileServiceApplication(
     private val startupStrategy: StartupStrategy
 ) : CommandLineRunner {
