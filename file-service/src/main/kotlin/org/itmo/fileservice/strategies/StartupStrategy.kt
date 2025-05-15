@@ -1,6 +1,6 @@
 package org.itmo.fileservice.strategies
 
-import org.itmo.fileservice.config.KafkaSystemProducer
+import org.itmo.fileservice.config.kafka.KafkaSystemProducer
 import org.itmo.fileservice.kafka.dto.KafkaSystemMessageDto
 import org.itmo.fileservice.kafka.enums.KafkaServices
 import org.itmo.fileservice.kafka.enums.KafkaSystemThemes
