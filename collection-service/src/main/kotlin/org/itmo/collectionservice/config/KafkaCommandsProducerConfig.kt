@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service
 
 @Configuration
 class KafkaCommandsProducerConfig {
-    @Value("\${spring.kafka.bootstrap-serverss}")
+    @Value("\${spring.kafka.bootstrap-servers}")
     private lateinit var kafkaServerConfig: String
 
     @Bean

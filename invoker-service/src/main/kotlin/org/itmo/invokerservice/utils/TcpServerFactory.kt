@@ -1,23 +1,24 @@
 package org.itmo.invokerservice.utils
 
-import io.github.cdimascio.dotenv.Dotenv
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.itmo.invokerservice.services.InvokerService
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import java.io.PrintWriter
 import java.net.ServerSocket
 
 @Component
 class TcpServerFactory(private val invokerService: InvokerService) {
-    private val dotenv: Dotenv = Dotenv.load()
+    @Value("\${config.server.port}")
+    private lateinit var tcpPort: String
 
     @OptIn(DelicateCoroutinesApi::class)
     fun startTcpServer() {
         GlobalScope.launch(Dispatchers.IO) {
-            val server = ServerSocket(dotenv.get("TCP_PORT").toInt())
+            val server = ServerSocket(tcpPort.toInt())
             println("Server is running on port ${server.localPort}")
 
             while (true) {

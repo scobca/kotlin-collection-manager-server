@@ -14,7 +14,7 @@ import org.springframework.kafka.core.ProducerFactory
 @Configuration
 class KafkaCollectionUpdatedProducerConfig {
     @Value("\${spring.kafka.bootstrap-servers}")
-    lateinit var kafkaConfig: String
+    private lateinit var kafkaConfig: String
 
     @Bean
     fun newTopicProducerFactory(): ProducerFactory<String, KafkaCollectionUpdateDto> {

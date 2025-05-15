@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service
 @Configuration
 class KafkaSystemProducerConfig {
     @Value("\${spring.kafka.bootstrap-servers}")
-    lateinit var kafkaConfig: String
+    private lateinit var kafkaConfig: String
 
     @Bean
     fun systemProducerFactory(): ProducerFactory<String, KafkaSystemMessageDto> {

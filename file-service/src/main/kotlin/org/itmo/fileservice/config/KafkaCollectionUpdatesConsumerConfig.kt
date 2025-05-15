@@ -17,12 +17,12 @@ import org.springframework.stereotype.Service
 @Configuration
 class KafkaCollectionUpdatesConsumerConfig {
     @Value("\${spring.kafka.bootstrap-servers}")
-    lateinit var kafkaConfig: String
+    private lateinit var kafkaConfig: String
 
     @Bean
     fun kafkaCollectionUpdatesConsumerFactory(): ConsumerFactory<String, KafkaCollectionUpdateDto> {
         val props = HashMap<String, Any>()
-        props[ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG] = kafkaConfig
+        props[ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG] = kafkaConfig.toString()
         props[ConsumerConfig.GROUP_ID_CONFIG] = "NewTopicGroup"
         props[ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG] = StringDeserializer::class.java
         props[ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG] = KafkaCollectionUpdatesDeserializer::class.java
