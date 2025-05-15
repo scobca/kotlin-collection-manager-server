@@ -1,5 +1,6 @@
 plugins {
     kotlin("jvm") version "1.9.25"
+    kotlin("kapt") version "1.9.0"
     kotlin("plugin.jpa") version "1.8.0"
     kotlin("plugin.spring") version "1.9.25"
     kotlin("plugin.serialization") version "2.1.20"
@@ -54,6 +55,10 @@ dependencies {
     // Database
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     runtimeOnly("org.postgresql:postgresql")
+
+    // Mapper
+    implementation("org.mapstruct:mapstruct:1.5.3.Final")
+    kapt("org.mapstruct:mapstruct-processor:1.5.3.Final")
 
     // Tests
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
