@@ -37,26 +37,30 @@ data class Flats(
     val coordinates: Coordinates,
 
     @Column(nullable = false)
-    var area: Long,
+    val area: Long,
 
     @Column(name = "number_of_rooms", nullable = false)
-    var numberOfRooms: Long,
+    val numberOfRooms: Long,
 
     @Column(nullable = false)
-    var price: Long,
+    val price: Long,
 
     @Column(nullable = false)
-    var balcony: Boolean,
+    val balcony: Boolean,
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    var furnish: Furnish,
+    val furnish: Furnish,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "house_id", nullable = false)
-    var house: Houses,
+    val house: Houses,
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    val user: Users,
 
     @TimeZoneStorage(TimeZoneStorageType.NATIVE)
     @Column(nullable = false)
-    var createdAt: ZonedDateTime,
+    val createdAt: ZonedDateTime,
 )
