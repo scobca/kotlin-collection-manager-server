@@ -2,6 +2,7 @@ package org.itmo.fileservice.io.handlers
 
 import org.itmo.fileservice.exceptions.DoubleRecordException
 import org.itmo.fileservice.exceptions.NotFoundException
+import org.itmo.fileservice.exceptions.WrongUserDataException
 import org.itmo.fileservice.io.BasicErrorResponse
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -40,5 +41,15 @@ class GlobalExceptionHandler : ResponseEntityExceptionHandler() {
         )
 
         return ResponseEntity(errorResponse, HttpStatus.CONFLICT)
+    }
+
+    @ExceptionHandler(WrongUserDataException::class)
+    fun handleWrongUserDataException(ex: WrongUserDataException, request: WebRequest): ResponseEntity<BasicErrorResponse> {
+        val errorResponse = BasicErrorResponse(
+            status = ex.status,
+            message = ex.message
+        )
+
+        return ResponseEntity(errorResponse, HttpStatus.UNAUTHORIZED)
     }
 }
