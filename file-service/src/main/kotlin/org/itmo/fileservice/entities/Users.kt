@@ -19,7 +19,7 @@ data class Users(
     val email: String,
 
     @Column(nullable = true)
-    var password: String,
+    var password: String?,
 ) : Convertable<Users> {
     override fun toHttpResponse(): BasicSuccessfulResponse<Users> = BasicSuccessfulResponse<Users>(this)
 }
