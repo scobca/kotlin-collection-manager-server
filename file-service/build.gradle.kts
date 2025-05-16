@@ -60,6 +60,10 @@ dependencies {
     implementation("org.mapstruct:mapstruct:1.5.3.Final")
     kapt("org.mapstruct:mapstruct-processor:1.5.3.Final")
 
+    // JWT Auth
+    implementation("io.jsonwebtoken:jjwt:0.12.6")
+    implementation("javax.xml.bind:jaxb-api:2.3.0")
+
     // Tests
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
