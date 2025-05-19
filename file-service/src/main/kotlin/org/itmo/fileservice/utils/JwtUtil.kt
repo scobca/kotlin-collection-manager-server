@@ -5,13 +5,16 @@ import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.Jwts.SIG
 import io.jsonwebtoken.security.Keys
 import org.itmo.fileservice.entities.Users
+import org.itmo.fileservice.exceptions.JwtAuthenticationException
+import org.itmo.fileservice.services.UsersService
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.context.annotation.Lazy
 import org.springframework.stereotype.Component
 import java.time.Instant
 import java.util.Date
 
 @Component
-class JwtUtil() {
+class JwtUtil(@Lazy private val usersService: UsersService) {
     @Value("\${config.jwt.secret}")
     private lateinit var jwtSecret: String
 
@@ -39,9 +42,22 @@ class JwtUtil() {
     }
 
     fun verifyToken(token: String): Boolean {
-        val claims = getClaims(token)
+        try {
+            val claims = getClaims(token) ?: throw JwtAuthenticationException("Invalid token claims")
+            if (!claims.expiration.after(Date())) {
+                throw JwtAuthenticationException("Token expired")
+            }
+            return true
+        } catch (e: Exception) {
+            throw JwtAuthenticationException("Invalid token: ${e.message}")
+        }
+    }
 
-        return claims?.expiration?.after(Date()) == true
+    fun getUserFromToken(token: String): Users? {
+        val claims = getClaims(token)
+        val user = usersService.getUserByEmail(claims?.get("email", String::class.java) ?: "")
+
+        return user.message
     }
 
     private fun getClaims(token: String): Claims? {
