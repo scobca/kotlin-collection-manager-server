@@ -4,6 +4,8 @@ import org.itmo.fileservice.dto.auth.AuthUserDto
 import org.itmo.fileservice.dto.users.CreateUserDto
 import org.itmo.fileservice.dto.users.UserTokensDto
 import org.itmo.fileservice.exceptions.DoubleRecordException
+import org.itmo.fileservice.exceptions.InvalidJwtTokenException
+import org.itmo.fileservice.exceptions.JwtAuthenticationException
 import org.itmo.fileservice.exceptions.WrongUserDataException
 import org.itmo.fileservice.io.BasicSuccessfulResponse
 import org.itmo.fileservice.repositories.UsersRepository
@@ -45,5 +47,19 @@ class AuthService(
         val user = usersService.getUserByEmail(userData.email).message
 
         return UserTokensDto(jwtUtil.generateAccessToken(user), jwtUtil.generateRefreshToken(user)).toHttpResponse()
+    }
+
+    fun getJwtTokens(refreshToken: String): BasicSuccessfulResponse<UserTokensDto> {
+        try {
+            jwtUtil.verifyToken(refreshToken)
+
+            val user = jwtUtil.getUserFromToken(refreshToken)
+            val res =
+                user?.let { UserTokensDto(jwtUtil.generateAccessToken(it), jwtUtil.updateRefreshToken(refreshToken)) }
+
+            return res?.toHttpResponse() ?: throw InvalidJwtTokenException("Refresh token is invalid. Try again.")
+        } catch (_: JwtAuthenticationException) {
+            throw InvalidJwtTokenException("Refresh token is invalid. Try again.")
+        }
     }
 }

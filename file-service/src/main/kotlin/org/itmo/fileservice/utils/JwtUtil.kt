@@ -5,6 +5,7 @@ import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.Jwts.SIG
 import io.jsonwebtoken.security.Keys
 import org.itmo.fileservice.entities.Users
+import org.itmo.fileservice.exceptions.InvalidJwtTokenException
 import org.itmo.fileservice.exceptions.JwtAuthenticationException
 import org.itmo.fileservice.services.UsersService
 import org.springframework.beans.factory.annotation.Value
@@ -53,18 +54,44 @@ class JwtUtil(@Lazy private val usersService: UsersService) {
         }
     }
 
+    fun updateRefreshToken(refreshToken: String): String {
+        verifyToken(refreshToken)
+
+        val claims = getClaims(refreshToken)!!
+        val expiration = claims.expiration
+        val issuedAt = claims.issuedAt
+
+        val totalLifetime = expiration?.time?.minus(issuedAt.time)
+        val remainingLifetime = expiration?.time?.minus(Date().time)
+
+        if (remainingLifetime != null) {
+            totalLifetime?.times(0.25)?.let {
+                if (remainingLifetime < it) {
+                    val user = getUserFromToken(refreshToken)
+
+                    return generateRefreshToken(user!!)
+                } else {
+                    return refreshToken
+                }
+            }
+        }
+        throw InvalidJwtTokenException("Invalid refresh token.")
+    }
+
     fun getUserFromToken(token: String): Users? {
         val claims = getClaims(token)
-        val user = usersService.getUserByEmail(claims?.get("email", String::class.java) ?: "")
+        val user = usersService.getUserById((claims?.get("id") as Int).toLong())
 
         return user.message
     }
 
-    private fun getClaims(token: String): Claims? {
-        return Jwts.parser()
+    fun getClaims(token: String): Claims? {
+        val claims =  Jwts.parser()
             .verifyWith(Keys.hmacShaKeyFor(jwtSecret.toByteArray()))
             .build()
             .parseSignedClaims(token)
             .payload
+
+        return claims
     }
 }
