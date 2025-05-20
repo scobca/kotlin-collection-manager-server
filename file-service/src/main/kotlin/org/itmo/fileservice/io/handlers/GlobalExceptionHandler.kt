@@ -1,5 +1,6 @@
 package org.itmo.fileservice.io.handlers
 
+import org.itmo.fileservice.exceptions.AccessDeniedException
 import org.itmo.fileservice.exceptions.DoubleRecordException
 import org.itmo.fileservice.exceptions.NotFoundException
 import org.itmo.fileservice.exceptions.WrongUserDataException
@@ -51,5 +52,15 @@ class GlobalExceptionHandler : ResponseEntityExceptionHandler() {
         )
 
         return ResponseEntity(errorResponse, HttpStatus.UNAUTHORIZED)
+    }
+
+    @ExceptionHandler(AccessDeniedException::class)
+    fun handleWrongUserDataException(ex: AccessDeniedException, request: WebRequest): ResponseEntity<BasicErrorResponse> {
+        val errorResponse = BasicErrorResponse(
+            status = ex.status,
+            message = ex.message
+        )
+
+        return ResponseEntity(errorResponse, HttpStatus.FORBIDDEN)
     }
 }
