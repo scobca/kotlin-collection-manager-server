@@ -24,9 +24,11 @@ class AuthService(
         val user = usersService.getUserByEmail(userData.email).message
 
         if (userData.password != null && user.password != null) {
-            val password = passwordClassifier.hashPassword(userData.password!!)
-
-            if (user.password != password) throw WrongUserDataException("Wrong user's email or password. Try again.")
+            if (passwordClassifier.verifyPassword(
+                    user.id,
+                    userData.password!!
+                ) == false
+            ) throw WrongUserDataException("Wrong user's email or password. Try again.")
 
             return UserTokensDto(jwtUtil.generateAccessToken(user), jwtUtil.generateRefreshToken(user)).toHttpResponse()
         } else if (userData.password == null && user.password == null) {
@@ -39,13 +41,10 @@ class AuthService(
         val oldUser = usersRepository.findByEmail(userData.email)
         if (oldUser != null) throw DoubleRecordException("User with email ${userData.email} already exists.")
 
-        if (userData.password != null) userData.password = passwordClassifier.hashPassword(userData.password!!)
-
         val dto = CreateUserDto(userData.email, userData.password)
-
         usersService.createUser(dto)
-        val user = usersService.getUserByEmail(userData.email).message
 
+        val user = usersService.getUserByEmail(userData.email).message
         return UserTokensDto(jwtUtil.generateAccessToken(user), jwtUtil.generateRefreshToken(user)).toHttpResponse()
     }
 
@@ -55,9 +54,9 @@ class AuthService(
 
             val user = jwtUtil.getUserFromToken(refreshToken)
             val res =
-                user?.let { UserTokensDto(jwtUtil.generateAccessToken(it), jwtUtil.updateRefreshToken(refreshToken)) }
+                UserTokensDto(jwtUtil.generateAccessToken(user), jwtUtil.updateRefreshToken(refreshToken))
 
-            return res?.toHttpResponse() ?: throw InvalidJwtTokenException("Refresh token is invalid. Try again.")
+            return res.toHttpResponse()
         } catch (_: JwtAuthenticationException) {
             throw InvalidJwtTokenException("Refresh token is invalid. Try again.")
         }

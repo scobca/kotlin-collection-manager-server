@@ -69,7 +69,7 @@ class JwtUtil(@Lazy private val usersService: UsersService) {
                 if (remainingLifetime < it) {
                     val user = getUserFromToken(refreshToken)
 
-                    return generateRefreshToken(user!!)
+                    return generateRefreshToken(user)
                 } else {
                     return refreshToken
                 }
@@ -78,7 +78,7 @@ class JwtUtil(@Lazy private val usersService: UsersService) {
         throw InvalidJwtTokenException("Invalid refresh token.")
     }
 
-    fun getUserFromToken(token: String): Users? {
+    fun getUserFromToken(token: String): Users {
         val claims = getClaims(token)
         val user = usersService.getUserById((claims?.get("id") as Int).toLong())
 

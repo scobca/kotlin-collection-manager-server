@@ -25,12 +25,8 @@ class PasswordClassifier(@Lazy private val usersService: UsersService) {
 
     fun verifyPassword(userId: Long, password: String): Boolean {
         val user = usersService.getUserById(userId).message
-        val md = MessageDigest.getInstance("SHA-512")
-        val salt = preSalt.toByteArray(charset("UTF-8"))
+        val hashedPassword = hashPassword(password)
 
-        md.update(salt)
-        val hashedPassword = md.digest(password.toByteArray(StandardCharsets.UTF_8)).joinToString("") { "%02x".format(it) }
-
-        return user?.password == hashedPassword
+        return user.password == hashedPassword
     }
 }
