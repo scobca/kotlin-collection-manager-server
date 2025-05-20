@@ -1,6 +1,5 @@
 package org.itmo.fileservice.entities
 
-import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
@@ -27,10 +26,9 @@ data class Flats(
     val id: Long,
 
     @Column(nullable = false)
-    val name: String,
+    var name: String,
 
     @OneToOne(
-        cascade = [CascadeType.ALL],
         fetch = FetchType.LAZY,
         optional = false
     )
@@ -38,20 +36,20 @@ data class Flats(
     val coordinates: Coordinates,
 
     @Column(nullable = false)
-    val area: Long,
+    var area: Long,
 
     @Column(name = "number_of_rooms", nullable = false)
-    val numberOfRooms: Long,
+    var numberOfRooms: Long,
 
     @Column(nullable = false)
-    val price: Long,
+    var price: Long,
 
     @Column(nullable = false)
-    val balcony: Boolean,
+    var balcony: Boolean,
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    val furnish: Furnish,
+    var furnish: Furnish,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "house_id", nullable = false)

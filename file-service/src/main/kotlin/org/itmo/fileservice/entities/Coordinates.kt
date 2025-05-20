@@ -16,10 +16,10 @@ data class Coordinates(
     val id: Long,
 
     @Column(nullable = false)
-    val x: Long,
+    var x: Long,
 
     @Column(nullable = false)
-    val y: Float,
+    var y: Float,
 ) : Convertable<Coordinates> {
     override fun toHttpResponse(): BasicSuccessfulResponse<Coordinates> = BasicSuccessfulResponse(this)
 }

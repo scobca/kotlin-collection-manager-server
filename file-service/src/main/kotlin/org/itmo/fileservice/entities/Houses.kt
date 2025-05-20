@@ -16,13 +16,13 @@ data class Houses(
     val id: Long,
 
     @Column(nullable = false)
-    val name: String,
+    var name: String,
 
     @Column(nullable = false)
-    val year: Int,
+    var year: Int,
 
     @Column(nullable = false)
-    val numberOfFloors: Long,
+    var numberOfFloors: Long,
 ) : Convertable<Houses> {
     override fun toHttpResponse(): BasicSuccessfulResponse<Houses> = BasicSuccessfulResponse(this)
 }
