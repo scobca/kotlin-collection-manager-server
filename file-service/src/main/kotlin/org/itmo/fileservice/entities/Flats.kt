@@ -1,5 +1,6 @@
 package org.itmo.fileservice.entities
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
@@ -61,6 +62,7 @@ data class Flats(
     @JoinColumn(name = "user_id", nullable = false)
     val user: Users,
 
+    @JsonIgnore
     @TimeZoneStorage(TimeZoneStorageType.NATIVE)
     @Column(nullable = false)
     val createdAt: ZonedDateTime,
