@@ -33,6 +33,17 @@ class FlatsController(
         return flatsService.getByUserId(user)
     }
 
+    @GetMapping("/getFlatById/{id}")
+    fun getFlatById(
+        @RequestHeader("Authorization") authHeader: String,
+        @PathVariable("id") id: Long,
+    ): BasicSuccessfulResponse<Flats> {
+        val jwtToken = authHeader.removePrefix("Bearer ")
+        val user = jwtUtil.getUserFromToken(jwtToken)
+
+        return flatsService.getFlatById(id, user)
+    }
+
     @PostMapping("/create")
     fun createFlat(
         @RequestBody() data: CreateFlatDto,
