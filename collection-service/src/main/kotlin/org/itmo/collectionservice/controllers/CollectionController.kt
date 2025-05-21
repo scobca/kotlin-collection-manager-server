@@ -2,7 +2,7 @@ package org.itmo.collectionservice.controllers
 
 import org.itmo.collectionservice.annotations.CommandDescription
 import org.itmo.collectionservice.annotations.CommandEndpoint
-import org.itmo.collectionservice.collection.items.Flat
+import org.itmo.collectionservice.api.dto.collection.GetFlatDto
 import org.itmo.collectionservice.controllers.dto.ReplaceIfLowerDto
 import org.itmo.collectionservice.services.CommandHttpResponse
 import org.itmo.collectionservice.services.CommandService
@@ -37,25 +37,26 @@ class CollectionController(private val commandService: CommandService) {
     @CommandEndpoint
     @CommandDescription("Outputs all the elements of the collection in a string representation")
     @PostMapping("/show")
-    fun show(): CommandHttpResponse<TreeMap<Long, Flat>> {
+    fun show(): CommandHttpResponse<TreeMap<Long, GetFlatDto>> {
         return commandService.show()
     }
 
     @CommandEndpoint
     @CommandDescription("Adds a new element with the specified key")
     @PostMapping("/insert")
-    fun insert(@RequestBody flatString: String): CommandHttpResponse<String> {
+    suspend fun insert(@RequestBody flatString: String): CommandHttpResponse<out String?> {
         try {
+            val token = StringToFlatParser.extractJwt(flatString)
             val flat = StringToFlatParser.parseToFlat(flatString)
 
-            val oldFlat = getElementById(flat.getId().toString())
+            val oldFlat = getElementById(flat.id.toString())
 
             if (oldFlat.toString().contains("[")) return CommandHttpResponse(
                 HttpStatus.CONFLICT.value(),
                 "Flat with this ID already exists"
             )
 
-            return commandService.insert(flat)
+            return commandService.insert(flat, token)
         } catch (e: Exception) {
             return CommandHttpResponse(HttpStatus.BAD_REQUEST.value(), e.message.toString())
         }
@@ -64,11 +65,12 @@ class CollectionController(private val commandService: CommandService) {
     @CommandEndpoint
     @CommandDescription("Updates the command by it's Id")
     @PostMapping("/update")
-    fun update(@RequestBody flatString: String): CommandHttpResponse<String> {
+    suspend fun update(@RequestBody flatString: String): CommandHttpResponse<out String?> {
         try {
+            val token = StringToFlatParser.extractJwt(flatString)
             val flat = StringToFlatParser.parseToFlat(flatString)
 
-            return commandService.update(flat)
+            return commandService.update(flat, token)
         } catch (e: Exception) {
             return CommandHttpResponse(HttpStatus.BAD_REQUEST.value(), e.message.toString())
         }
@@ -77,40 +79,45 @@ class CollectionController(private val commandService: CommandService) {
     @CommandEndpoint
     @CommandDescription("Removes an element by it Id")
     @PostMapping("/remove")
-    fun remove(@RequestBody flatId: String): CommandHttpResponse<String> {
-        return commandService.remove(flatId)
+    suspend fun remove(@RequestBody flatId: String): CommandHttpResponse<out String?> {
+        val token = flatId.split(" ")[1]
+        return commandService.remove(flatId.split(" ")[0], token)
     }
 
     @CommandEndpoint
     @CommandDescription("Remove all flats with id lower than arguments id")
     @PostMapping("/removeIfLowerKey")
-    fun removeIfLowerKey(@RequestBody id: String): CommandHttpResponse<String> {
-        return commandService.removeIfLowerKey(id)
+    suspend fun removeIfLowerKey(@RequestBody id: String): CommandHttpResponse<String> {
+        val token = id.split(" ")[1]
+        return commandService.removeIfLowerKey(id.split(" ")[0], token)
     }
 
     @CommandEndpoint
     @CommandDescription("Removes all flats by balcony parameter")
     @PostMapping("/removeAllByBalcony")
-    fun removeAllByBalcony(@RequestBody balcony: String): CommandHttpResponse<String> {
-        return commandService.removeAllByBalcony(balcony)
+    suspend fun removeAllByBalcony(@RequestBody balcony: String): CommandHttpResponse<String> {
+        val token = balcony.split(" ")[1]
+        return commandService.removeAllByBalcony(balcony.split(" ")[0], token)
     }
 
     @CommandEndpoint
     @CommandDescription("Clears the flats collection")
     @PostMapping("/clear")
-    fun clear(): CommandHttpResponse<String> {
-        return commandService.clear()
+    suspend fun clear(@RequestBody() token: String): CommandHttpResponse<out String?> {
+        println(token)
+        return commandService.clear(token.trim())
     }
 
     @CommandEndpoint
     @CommandDescription("Replace a flat from a collection if it lower than new flat")
     @PostMapping("/replaceIfLower")
-    fun replaceIfLower(@RequestBody bodyString: String): CommandHttpResponse<String> {
+    suspend fun replaceIfLower(@RequestBody bodyString: String): CommandHttpResponse<String> {
         try {
+            val token = StringToFlatParser.extractJwt(bodyString)
             val flat = StringToFlatParser.parseToFlat(bodyString)
-            val body = ReplaceIfLowerDto(flat.getId(), flat)
+            val body = ReplaceIfLowerDto(flat.id, flat)
 
-            return commandService.replaceIfLower(body)
+            return commandService.replaceIfLower(body, token)
         } catch (e: Exception) {
             return CommandHttpResponse(HttpStatus.CONFLICT.value(), e.message.toString())
         }

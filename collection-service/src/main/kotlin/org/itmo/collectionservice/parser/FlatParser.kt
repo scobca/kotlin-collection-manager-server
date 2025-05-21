@@ -1,5 +1,6 @@
 package org.itmo.collectionservice.parser
 
+import org.itmo.collectionservice.api.dto.collection.toSerializable
 import org.itmo.collectionservice.collection.Collection
 import org.itmo.collectionservice.collection.items.Coordinates
 import org.itmo.collectionservice.collection.items.Flat

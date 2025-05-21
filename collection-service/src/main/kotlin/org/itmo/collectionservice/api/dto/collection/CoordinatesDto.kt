@@ -1,3 +1,6 @@
 package org.itmo.collectionservice.api.dto.collection
 
-data class CoordinatesDto(val id: Long, val x: Long, val y: Float)
+import kotlinx.serialization.Serializable
+
+@Serializable
+data class CoordinatesDto(val id: Long? = null, val x: Long, val y: Float)
