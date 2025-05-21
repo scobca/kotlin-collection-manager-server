@@ -4,7 +4,6 @@ import org.itmo.fileservice.dto.auth.AuthUserDto
 import org.itmo.fileservice.dto.users.UserTokensDto
 import org.itmo.fileservice.io.BasicSuccessfulResponse
 import org.itmo.fileservice.services.AuthService
-import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -21,7 +20,7 @@ class AuthController(private val authService: AuthService) {
     fun register(@RequestBody() userData: AuthUserDto): BasicSuccessfulResponse<UserTokensDto> =
         authService.register(userData)
 
-    @GetMapping("/updateJwtTokens")
+    @PostMapping("/updateJwtTokens")
     fun getJwtTokens(@RequestBody() token: String): BasicSuccessfulResponse<UserTokensDto> {
         return authService.getJwtTokens(token)
     }
