@@ -7,6 +7,7 @@ import org.itmo.fileservice.entities.Users
 import java.time.ZonedDateTime
 
 data class CreateFlatInternalDto(
+    val id: Long,
     val name: String,
     val coordinates: Coordinates,
     val area: Long,

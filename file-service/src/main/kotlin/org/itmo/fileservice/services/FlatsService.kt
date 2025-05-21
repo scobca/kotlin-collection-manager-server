@@ -48,6 +48,7 @@ class FlatsService(
         println(house)
 
         val internalFlatDto = CreateFlatInternalDto(
+            id = flatDto.id,
             name = flatDto.name,
             coordinates = coordinates.message,
             area = flatDto.area,

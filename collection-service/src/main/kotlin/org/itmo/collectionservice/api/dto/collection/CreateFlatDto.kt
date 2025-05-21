@@ -4,6 +4,7 @@ import org.itmo.collectionservice.collection.items.Furnish
 
 
 data class CreateFlatDto(
+    val id: Long,
     val name: String,
     val x: Long,
     val y: Float,

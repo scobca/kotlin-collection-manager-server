@@ -49,6 +49,7 @@ fun GetFlatDto.toSerializable(): FlatDto {
 
 fun GetFlatDto.toCreateFlatDto(): CreateFlatDto {
     return CreateFlatDto(
+        id = this.id,
         name = this.name,
         x = this.coordinates.x,
         y = this.coordinates.y,

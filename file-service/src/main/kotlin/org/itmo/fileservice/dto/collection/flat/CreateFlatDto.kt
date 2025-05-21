@@ -3,6 +3,7 @@ package org.itmo.fileservice.dto.collection.flat
 import org.itmo.fileservice.collection.items.Furnish
 
 data class CreateFlatDto(
+    val id: Long,
     val name: String,
     val x: Long,
     val y: Float,

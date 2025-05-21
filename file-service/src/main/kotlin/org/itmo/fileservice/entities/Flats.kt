@@ -24,7 +24,7 @@ import java.time.ZonedDateTime
 @Table(name = "flats")
 data class Flats(
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(nullable = false)
     val id: Long,
 
     @Column(nullable = false)
