@@ -39,3 +39,5 @@ config:
     port: ${TCP_PORT}
   collection-service:
     host: ${COLLECTION_SERVICE_URL}
+  file-service:
+    host: ${FILE_SERVICE_URL}

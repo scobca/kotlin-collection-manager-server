@@ -11,11 +11,22 @@ class WebClientConfig {
     @Value("\${config.collection-service.host}")
     private lateinit var collectionServiceConfig: String
 
+    @Value("\${config.file-service.host}")
+    private lateinit var fileServiceHost: String
+
     @Bean
     @Qualifier(value = "collectionService")
-    fun invokerServiceWebClient(): WebClient {
+    fun collectionServiceWebClient(): WebClient {
         return WebClient.builder()
             .baseUrl(collectionServiceConfig)
+            .build()
+    }
+
+    @Bean
+    @Qualifier(value = "fileService")
+    fun fileServiceWebClient(): WebClient {
+        return WebClient.builder()
+            .baseUrl(fileServiceHost)
             .build()
     }
 }
