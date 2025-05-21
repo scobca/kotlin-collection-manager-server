@@ -95,4 +95,15 @@ class FlatsService(
 
         return BasicSuccessfulResponse("Flat with id: $id deleted successfully.")
     }
+
+    @Transactional
+    fun deleteAll(user: Users): BasicSuccessfulResponse<String> {
+        getByUserId(user).message.filter { user.id == it.user.id }.forEach { flat ->
+            flatsRepository.deleteById(flat.id)
+            coordinatesService.deleteCoordinates(flat.coordinates.id)
+            housesService.deleteById(flat.house.id)
+        }
+
+        return BasicSuccessfulResponse("All flats deleted.")
+    }
 }
