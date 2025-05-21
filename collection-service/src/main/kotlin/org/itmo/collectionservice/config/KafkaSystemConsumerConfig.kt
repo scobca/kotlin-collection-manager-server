@@ -7,7 +7,7 @@ import org.itmo.collectionservice.kafka.dto.KafkaSystemMessageDto
 import org.itmo.collectionservice.kafka.enums.KafkaServices
 import org.itmo.collectionservice.kafka.enums.KafkaSystemThemes
 import org.itmo.collectionservice.serializers.KafkaSystemMessageDeserializer
-import org.itmo.collectionservice.services.CollectionService
+import org.itmo.collectionservice.api.FlatsReceiver
 import org.itmo.collectionservice.strategies.StartupStrategy
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
@@ -36,7 +36,7 @@ class KafkaConsumerConfig {
 @Service
 class KafkaSystemMessagesConsumer(
     private val deserializer: KafkaSystemMessageDeserializer,
-    private val collectionService: CollectionService,
+    private val flatsReceiver: FlatsReceiver,
     private val startupStrategy: StartupStrategy
 ) {
     @KafkaListener(topics = ["SYSTEM"], groupId = "InvokerService")
@@ -44,7 +44,7 @@ class KafkaSystemMessagesConsumer(
         val message = deserializer.deserialize("SYSTEM", consumerRecord.value().toString().toByteArray())
 
         if (message.service == KafkaServices.FILE_SERVICE || message.theme == KafkaSystemThemes.COLLECTION_READY) {
-            collectionService.getCollection()
+            flatsReceiver.getCollection()
         }
 
         if (message.service == KafkaServices.INVOKER_SERVICE) {
