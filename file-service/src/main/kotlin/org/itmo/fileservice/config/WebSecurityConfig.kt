@@ -20,6 +20,7 @@ class WebSecurityConfig(
         http
             .authorizeHttpRequests { auth ->
                 auth.requestMatchers("/service/v1/auth/**").permitAll()
+                auth.requestMatchers("/service/v1/flats/getAll").permitAll()
                 auth.anyRequest().authenticated()
             }
             .csrf { csrf -> csrf.disable() }
