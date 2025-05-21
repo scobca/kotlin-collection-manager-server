@@ -69,7 +69,6 @@ class CommandService(
 
     @ChangingCollection
     suspend fun insert(flat: GetFlatDto, token: String): CommandHttpResponse<out String?> {
-        println(token)
         try {
             val response = fileServiceWebClient
                 .post()
