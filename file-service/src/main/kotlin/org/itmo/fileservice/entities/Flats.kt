@@ -1,5 +1,6 @@
 package org.itmo.fileservice.entities
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
@@ -55,6 +56,7 @@ data class Flats(
     @JoinColumn(name = "house_id", nullable = false)
     val house: Houses,
 
+    @JsonIgnoreProperties(value = ["password"])
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     val user: Users,
