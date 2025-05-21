@@ -1,6 +1,6 @@
 package org.itmo.collectionservice.strategies
 
-import org.itmo.collectionservice.config.KafkaCollectionUpdatesProducer
+import org.itmo.collectionservice.config.kafka.KafkaCollectionUpdatesProducer
 import org.itmo.collectionservice.kafka.dto.KafkaCollectionUpdateDto
 import org.itmo.collectionservice.parser.FlatParser
 import org.springframework.stereotype.Component

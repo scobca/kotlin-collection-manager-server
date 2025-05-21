@@ -1,4 +1,4 @@
-package org.itmo.collectionservice.config
+package org.itmo.collectionservice.config.kafka
 
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.clients.consumer.ConsumerRecord

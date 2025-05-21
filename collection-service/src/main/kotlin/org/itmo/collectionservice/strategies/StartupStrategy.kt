@@ -1,7 +1,7 @@
 package org.itmo.collectionservice.strategies
 
-import org.itmo.collectionservice.config.KafkaCommandsSynchronizationProducer
-import org.itmo.collectionservice.config.KafkaSystemProducer
+import org.itmo.collectionservice.config.kafka.KafkaCommandsSynchronizationProducer
+import org.itmo.collectionservice.config.kafka.KafkaSystemProducer
 import org.itmo.collectionservice.kafka.dto.KafkaCommandsSynchronizationDto
 import org.itmo.collectionservice.kafka.dto.KafkaSystemMessageDto
 import org.itmo.collectionservice.kafka.enums.KafkaServices
