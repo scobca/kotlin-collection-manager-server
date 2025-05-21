@@ -2,7 +2,6 @@ package org.itmo.collectionservice.controllers
 
 import org.itmo.collectionservice.annotations.CommandDescription
 import org.itmo.collectionservice.annotations.CommandEndpoint
-import org.itmo.collectionservice.api.dto.collection.GetFlatDto
 import org.itmo.collectionservice.controllers.dto.ReplaceIfLowerDto
 import org.itmo.collectionservice.services.CommandHttpResponse
 import org.itmo.collectionservice.services.CommandService
@@ -14,7 +13,6 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import java.util.TreeMap
 
 @RestController
 @RequestMapping("/collection")
@@ -37,7 +35,7 @@ class CollectionController(private val commandService: CommandService) {
     @CommandEndpoint
     @CommandDescription("Outputs all the elements of the collection in a string representation")
     @PostMapping("/show")
-    fun show(): CommandHttpResponse<TreeMap<Long, GetFlatDto>> {
+    suspend fun show(): CommandHttpResponse<out Any?> {
         return commandService.show()
     }
 

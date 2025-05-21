@@ -18,7 +18,6 @@ import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.awaitBody
-import java.util.TreeMap
 
 data class CommandHttpResponse<T>(
     val status: Int,
@@ -63,8 +62,22 @@ class CommandService(
         )
     }
 
-    fun show(): CommandHttpResponse<TreeMap<Long, GetFlatDto>> {
-        return CommandHttpResponse<TreeMap<Long, GetFlatDto>>(HttpStatus.OK.value(), collection.getFlats())
+    suspend fun show(): CommandHttpResponse<out Any?> {
+        return try {
+            val response = fileServiceWebClient
+                .get()
+                .uri("/service/v1/flats/getAll")
+                .retrieve()
+                .awaitBody<BasicSuccessfulResponse<List<GetFlatDto>>>()
+
+            if (response.status == HttpStatus.OK.value()) {
+                CommandHttpResponse(HttpStatus.OK.value(), response.message)
+            } else {
+                CommandHttpResponse<String>(response.status, response.message.toString())
+            }
+        } catch (e: Exception) {
+            CommandHttpResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.message)
+        }
     }
 
     @ChangingCollection
