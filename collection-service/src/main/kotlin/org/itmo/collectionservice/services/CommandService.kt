@@ -2,11 +2,11 @@ package org.itmo.collectionservice.services
 
 import kotlinx.serialization.Serializable
 import org.itmo.collectionservice.annotations.ChangingCollection
+import org.itmo.collectionservice.api.dto.collection.GetFlatDto
+import org.itmo.collectionservice.api.dto.collection.toSerializable
 import org.itmo.collectionservice.collection.Collection
-import org.itmo.collectionservice.collection.items.Flat
 import org.itmo.collectionservice.controllers.dto.ReplaceIfLowerDto
 import org.itmo.collectionservice.parser.dto.FlatDto
-import org.itmo.collectionservice.parser.toSerializable
 import org.itmo.collectionservice.services.dto.CollectionInfoDto
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
@@ -28,13 +28,13 @@ class CommandService(@Autowired private val collection: Collection) {
     fun getElementById(id: String): Any {
         val flat = collection[id.toLong()]
         return if (flat != null) {
-            return "[${flat.getId()},${flat.getHouse()?.getName()},${
-                flat.getCoordinates()?.getX()
+            return "[${flat.id},${flat.name},${
+                flat.coordinates.x
             },${
-                flat.getCoordinates()?.getY()
-            },${flat.getArea()},${flat.getNumberOfRooms()},${flat.getPrice()},${flat.getBalcony()},${flat.getFurnish()},${
-                flat.getHouse()?.getName()
-            },${flat.getHouse()?.getYear()},${flat.getHouse()?.getNumberOfFloors()}]"
+                flat.coordinates.y
+            },${flat.area},${flat.numberOfRooms},${flat.price},${flat.balcony},${flat.furnish},${
+                flat.house.name
+            },${flat.house.year},${flat.house.numberOfFloors}]"
         } else {
             CommandHttpResponse(HttpStatus.NOT_FOUND.value(), "Flat with id $id not found")
         }
@@ -51,23 +51,23 @@ class CommandService(@Autowired private val collection: Collection) {
         )
     }
 
-    fun show(): CommandHttpResponse<TreeMap<Long, Flat>> {
-        return CommandHttpResponse<TreeMap<Long, Flat>>(HttpStatus.OK.value(), collection.getFlats())
+    fun show(): CommandHttpResponse<TreeMap<Long, GetFlatDto>> {
+        return CommandHttpResponse<TreeMap<Long, GetFlatDto>>(HttpStatus.OK.value(), collection.getFlats())
     }
 
     @ChangingCollection
-    fun insert(flat: Flat): CommandHttpResponse<String> {
-        collection.getFlats()[flat.getId()] = flat
+    fun insert(flat: GetFlatDto): CommandHttpResponse<String> {
+        collection.getFlats()[flat.id] = flat
         return CommandHttpResponse(HttpStatus.OK.value(), "Flat created")
     }
 
     @ChangingCollection
-    fun update(flat: Flat): CommandHttpResponse<String> {
-        val flatId = flat.getId()
+    fun update(flat: GetFlatDto): CommandHttpResponse<String> {
+        val flatId = flat.id
         val oldFlat = collection.getFlats()[flatId]
 
         if (oldFlat != null) {
-            collection.getFlats()[flat.getId()] = flat
+            collection.getFlats()[flat.id] = flat
             return CommandHttpResponse(HttpStatus.OK.value(), "Flat updated")
         } else {
             insert(flat)
@@ -101,7 +101,7 @@ class CommandService(@Autowired private val collection: Collection) {
     @ChangingCollection
     fun removeAllByBalcony(bool: String): CommandHttpResponse<String> {
         collection.getFlats()
-            .filter { it.value.getBalcony().toString() == bool }
+            .filter { it.value.balcony.toString() == bool }
             .keys
             .forEach { remove(it.toString()) }
 
@@ -130,7 +130,7 @@ class CommandService(@Autowired private val collection: Collection) {
 
     fun getAveragePrice(): CommandHttpResponse<String> {
         val flats = collection.getFlats().values
-        val prices = flats.mapNotNull { it.getPrice() }
+        val prices = flats.map { it.price }
 
         return if (prices.isNotEmpty()) {
             val average = prices.average()
@@ -144,7 +144,7 @@ class CommandService(@Autowired private val collection: Collection) {
         val flats = collection.getFlats()
 
         val response = flats.values
-            .filter { it.getName()?.contains(data.trim(), ignoreCase = true) == true }
+            .filter { it.name.contains(data.trim(), ignoreCase = true) == true }
             .map { it.toSerializable() }
 
         return CommandHttpResponse(HttpStatus.OK.value(), FlatsResponse(response))
