@@ -1,0 +1,19 @@
+name: "kotlin-collection-manager"
+services:
+  file-service:
+    image: openjdk:21-jdk-slim
+    container_name: "collection-service"
+    restart: always
+    ports:
+      - "8081:8081"
+    entrypoint: [ "java", "-jar", "/home/collection-service.jar" ]
+    volumes:
+      - ./build/libs/collection-service.jar:/home/collection-service.jar
+    env_file:
+      - .env.production
+    networks:
+      backend-net:
+
+networks:
+  backend-net:
+    driver: bridge

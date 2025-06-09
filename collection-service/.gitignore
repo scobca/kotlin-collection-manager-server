@@ -41,3 +41,4 @@ out/
 
 ### Enviropment ###
 .env
+.env.production
