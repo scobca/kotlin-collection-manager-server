@@ -1,0 +1,19 @@
+name: "kotlin-collection-manager"
+services:
+  file-service:
+    image: openjdk:21-jdk-slim
+    container_name: "file-service"
+    restart: always
+    ports:
+      - "8082:8082"
+    entrypoint: [ "java", "-jar", "/home/file-service.jar" ]
+    volumes:
+      - ./build/libs/file-service.jar:/home/file-service.jar
+    env_file:
+      - .env.production
+    networks:
+      backend-net:
+
+networks:
+  backend-net:
+    driver: bridge
