@@ -34,18 +34,21 @@ class InvokerService(
 
         if (commandsList?.contains(command) == true || command == "getElementById") {
             try {
-                return if (!args.isEmpty()) {
+                return if (args.size == 1) {
                     webClient
                         .post()
                         .uri("/collection/${command}")
                         .bodyValue(args.last())
+                        .header("Authorization", "Bearer ${args[0]}")
                         .retrieve()
                         .awaitBody<String>()
                 } else {
+                    println(args[0] + " " + args[1])
                     webClient
                         .post()
                         .uri("/collection/${command}")
-                        .bodyValue(args)
+                        .bodyValue(args[0])
+                        .header("Authorization", "Bearer ${args[1]}")
                         .retrieve()
                         .awaitBody<Any>()
                 }
