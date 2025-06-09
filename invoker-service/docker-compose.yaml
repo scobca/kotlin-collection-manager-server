@@ -6,6 +6,7 @@ services:
     restart: always
     ports:
       - "8080:8080"
+      - "6000:6000/tcp"
     entrypoint: [ "java", "-jar", "/home/invoker-service.jar" ]
     volumes:
       - ./build/libs/invoker-service.jar:/home/invoker-service.jar
