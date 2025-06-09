@@ -150,9 +150,11 @@ class CommandService(
                     collection.getFlats().remove(flatId.toLong())
                     return CommandHttpResponse(HttpStatus.OK.value(), "Flat removed")
                 } else {
+                    println(response)
                     return CommandHttpResponse(response.status, response.message.toString())
                 }
             } catch (e: Exception) {
+                println(e)
                 return CommandHttpResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.message)
             }
         } else {
@@ -199,6 +201,7 @@ class CommandService(
                 return CommandHttpResponse(response.status, response.message.toString())
             }
         } catch (e: Exception) {
+            println(e)
             return CommandHttpResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.message)
         }
     }
@@ -219,6 +222,7 @@ class CommandService(
 
     fun getAveragePrice(): CommandHttpResponse<String> {
         val flats = collection.getFlats().values
+        println(flats)
         val prices = flats.map { it.price }
 
         return if (prices.isNotEmpty()) {

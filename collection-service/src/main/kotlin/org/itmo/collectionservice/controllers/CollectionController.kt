@@ -11,6 +11,7 @@ import org.itmo.collectionservice.utils.StringToFlatParser
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
@@ -77,33 +78,38 @@ class CollectionController(private val commandService: CommandService) {
     @CommandEndpoint
     @CommandDescription("Removes an element by it Id")
     @PostMapping("/remove")
-    suspend fun remove(@RequestBody flatId: String): CommandHttpResponse<out String?> {
-        val token = flatId.split(" ")[1]
-        return commandService.remove(flatId.split(" ")[0], token)
+    suspend fun remove(
+        @RequestBody flatId: String,
+        @RequestHeader("Authorization") authorization: String
+    ): CommandHttpResponse<out String?> {
+        println(flatId + "flat id")
+
+        val token = authorization.substringAfter("Bearer").trim()
+        return commandService.remove(flatId, token)
     }
 
     @CommandEndpoint
     @CommandDescription("Remove all flats with id lower than arguments id")
     @PostMapping("/removeIfLowerKey")
-    suspend fun removeIfLowerKey(@RequestBody id: String): CommandHttpResponse<String> {
-        val token = id.split(" ")[1]
-        return commandService.removeIfLowerKey(id.split(" ")[0], token)
+    suspend fun removeIfLowerKey(@RequestBody id: String, @RequestHeader("Authorization") authorization: String): CommandHttpResponse<String> {
+        val token = authorization.substringAfter("Bearer").trim()
+        return commandService.removeIfLowerKey(id, token)
     }
 
     @CommandEndpoint
     @CommandDescription("Removes all flats by balcony parameter")
     @PostMapping("/removeAllByBalcony")
-    suspend fun removeAllByBalcony(@RequestBody balcony: String): CommandHttpResponse<String> {
-        val token = balcony.split(" ")[1]
-        return commandService.removeAllByBalcony(balcony.split(" ")[0], token)
+    suspend fun removeAllByBalcony(@RequestBody balcony: String, @RequestHeader("Authorization") authorization: String): CommandHttpResponse<String> {
+        val token = authorization.substringAfter("Bearer").trim()
+        return commandService.removeAllByBalcony(balcony, token)
     }
 
     @CommandEndpoint
     @CommandDescription("Clears the flats collection")
     @PostMapping("/clear")
-    suspend fun clear(@RequestBody() token: String): CommandHttpResponse<out String?> {
-        println(token)
-        return commandService.clear(token.trim())
+    suspend fun clear(@RequestHeader("Authorization") authorization: String): CommandHttpResponse<out String?> {
+        val token = authorization.substringAfter("Bearer").trim()
+        return commandService.clear(token)
     }
 
     @CommandEndpoint
