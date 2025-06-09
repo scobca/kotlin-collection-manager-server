@@ -1,6 +1,6 @@
 name: "kotlin-collection-manager"
 services:
-  file-service:
+  collection-service:
     image: openjdk:21-jdk-slim
     container_name: "collection-service"
     restart: always
