@@ -1,0 +1,19 @@
+name: "kotlin-collection-manager"
+services:
+  invoker-service:
+    image: openjdk:21-jdk-slim
+    container_name: "invoker-service"
+    restart: always
+    ports:
+      - "8080:8080"
+    entrypoint: [ "java", "-jar", "/home/invoker-service.jar" ]
+    volumes:
+      - ./build/libs/invoker-service.jar:/home/invoker-service.jar
+    env_file:
+      - .env.production
+    networks:
+      backend-net:
+
+networks:
+  backend-net:
+    driver: bridge
