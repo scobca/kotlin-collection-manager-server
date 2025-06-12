@@ -82,8 +82,6 @@ class CollectionController(private val commandService: CommandService) {
         @RequestBody flatId: String,
         @RequestHeader("Authorization") authorization: String
     ): CommandHttpResponse<out String?> {
-        println(flatId + "flat id")
-
         val token = authorization.substringAfter("Bearer").trim()
         return commandService.remove(flatId, token)
     }

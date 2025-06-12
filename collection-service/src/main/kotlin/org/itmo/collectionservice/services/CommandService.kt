@@ -135,30 +135,24 @@ class CommandService(
 
     @ChangingCollection
     suspend fun remove(flatId: String, token: String): CommandHttpResponse<out String?> {
-        val flat = collection.getFlats()[flatId.toLong()]
+        try {
+            val response = fileServiceWebClient
+                .delete()
+                .uri("/service/v1/flats/delete/$flatId")
+                .header("Authorization", "Bearer $token")
+                .retrieve()
+                .awaitBody<BasicSuccessfulResponse<String>>()
 
-        if (flat != null) {
-            try {
-                val response = fileServiceWebClient
-                    .delete()
-                    .uri("/service/v1/flats/delete/$flatId")
-                    .header("Authorization", "Bearer $token")
-                    .retrieve()
-                    .awaitBody<BasicSuccessfulResponse<String>>()
-
-                if (response.status == HttpStatus.OK.value()) {
-                    collection.getFlats().remove(flatId.toLong())
-                    return CommandHttpResponse(HttpStatus.OK.value(), "Flat removed")
-                } else {
-                    println(response)
-                    return CommandHttpResponse(response.status, response.message.toString())
-                }
-            } catch (e: Exception) {
-                println(e)
-                return CommandHttpResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.message)
+            if (response.status == HttpStatus.OK.value()) {
+                collection.getFlats().remove(flatId.toLong())
+                return CommandHttpResponse(HttpStatus.OK.value(), "Flat removed")
+            } else {
+                println(response)
+                return CommandHttpResponse(response.status, response.message.toString())
             }
-        } else {
-            return CommandHttpResponse(HttpStatus.NOT_FOUND.value(), "Flat not found")
+        } catch (e: Exception) {
+            println(e)
+            return CommandHttpResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.message)
         }
     }
 
