@@ -5,13 +5,11 @@ services:
     container_name: "invoker-service"
     restart: always
     ports:
+      - "6000:6000"
       - "8080:8080"
-      - "6000:6000/tcp"
-    entrypoint: [ "java", "-jar", "/home/invoker-service.jar" ]
+    entrypoint: /bin/bash /home/startup.sh
     volumes:
-      - ./build/libs/invoker-service.jar:/home/invoker-service.jar
-    env_file:
-      - .env.production
+      - ./docker:/home
     networks:
       backend-net:
 
