@@ -40,3 +40,6 @@ out/
 .kotlin
 .env
 docker/.env
+
+### Collection version control ###
+default*.json
