@@ -6,11 +6,9 @@ services:
     restart: always
     ports:
       - "8081:8081"
-    entrypoint: [ "java", "-jar", "/home/collection-service.jar" ]
+    entrypoint: /bin/bash /home/startup.sh
     volumes:
-      - ./build/libs/collection-service.jar:/home/collection-service.jar
-    env_file:
-      - .env.production
+      - ./docker:/home
     networks:
       backend-net:
 
