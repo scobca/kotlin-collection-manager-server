@@ -88,11 +88,8 @@ class FlatsService(
     }
 
     @Transactional
-    fun deleteFlat(id: Long, user: Users): BasicSuccessfulResponse<String> {
-        val flat = getFlatById(id, user).message
+    fun deleteFlat(id: Long): BasicSuccessfulResponse<String> {
         flatsRepository.deleteById(id)
-        coordinatesService.deleteCoordinates(flat.coordinates.id)
-        housesService.deleteById(flat.house.id)
 
         return BasicSuccessfulResponse("Flat with id: $id deleted successfully.")
     }

@@ -69,12 +69,8 @@ class FlatsController(
     @DeleteMapping("/delete/{id}")
     fun deleteFlat(
         @PathVariable("id") id: Long,
-        @RequestHeader("Authorization") authHeader: String
     ): BasicSuccessfulResponse<String> {
-        val jwtToken = authHeader.removePrefix("Bearer ")
-        val user = jwtUtil.getUserFromToken(jwtToken)
-
-        return flatsService.deleteFlat(id, user)
+        return flatsService.deleteFlat(id)
     }
 
     @DeleteMapping("/deleteAll")

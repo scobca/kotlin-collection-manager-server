@@ -53,7 +53,7 @@ data class Flats(
     @Column(nullable = false)
     var furnish: Furnish,
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
     @JoinColumn(name = "house_id", nullable = false)
     val house: Houses,
 
