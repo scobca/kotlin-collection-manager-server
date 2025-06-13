@@ -89,7 +89,11 @@ class FlatsService(
 
     @Transactional
     fun deleteFlat(id: Long): BasicSuccessfulResponse<String> {
-        flatsRepository.deleteById(id)
+        val flat = flatsRepository.findById(id)
+
+        if (flat == Optional.empty<Flats>()) throw NotFoundException("Flat with id: $id not found")
+
+        flatsRepository.delete(flat.get())
 
         return BasicSuccessfulResponse("Flat with id: $id deleted successfully.")
     }

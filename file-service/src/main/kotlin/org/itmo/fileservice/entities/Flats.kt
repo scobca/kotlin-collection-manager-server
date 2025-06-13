@@ -7,7 +7,6 @@ import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
 import jakarta.persistence.Enumerated
-import jakarta.persistence.FetchType
 import jakarta.persistence.Id
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
@@ -30,9 +29,8 @@ data class Flats(
     var name: String,
 
     @OneToOne(
-        fetch = FetchType.LAZY,
-        optional = false,
-        cascade = [CascadeType.ALL]
+        cascade = [CascadeType.ALL],
+        orphanRemoval = true,
     )
     @JoinColumn(name = "coordinates_id", referencedColumnName = "id")
     val coordinates: Coordinates,
@@ -53,12 +51,12 @@ data class Flats(
     @Column(nullable = false)
     var furnish: Furnish,
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
+    @ManyToOne
     @JoinColumn(name = "house_id", nullable = false)
     val house: Houses,
 
     @JsonIgnoreProperties(value = ["password"])
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(cascade = [CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH])
     @JoinColumn(name = "user_id", nullable = false)
     val user: Users,
 
