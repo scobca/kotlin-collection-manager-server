@@ -1,0 +1,110 @@
+name: "kotlin-collection-manager"
+services:
+  zookeeper:
+    image: confluentinc/cp-zookeeper:6.2.0
+    restart: always
+    container_name: "kotlin-collection-manager-zookeeper"
+    hostname: zookeeper
+    networks:
+      - kotlin-collection-manager-net
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    expose:
+      - "2181"
+
+  kafka-1:
+    image: confluentinc/cp-kafka:6.2.0
+    restart: always
+    container_name: "kotlin-collection-manager-kafka-1"
+    hostname: kafka1
+    networks:
+      - kotlin-collection-manager-net
+    depends_on:
+      - zookeeper
+    expose:
+      - "9991"
+      - "9997"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka1:29191
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_JMX_PORT: 9997
+      KAFKA_JMX_HOSTNAME: kafka1
+
+  kafka-ui:
+    image: provectuslabs/kafka-ui
+    restart: always
+    networks:
+      - kotlin-collection-manager-net
+    depends_on:
+      - zookeeper
+      - kafka-1
+    container_name: "kotlin-collection-manager-kafka-ui"
+    ports:
+      - "8190:8190"
+    environment:
+      DYNAMIC_CONFIG_ENABLED: true
+
+  postgres:
+    container_name: "kotlin-collection-manager-postgres"
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    expose:
+      - "5432"
+    networks:
+      - kotlin-collection-manager-net
+
+  invoker-service:
+    image: openjdk:21-jdk-slim
+    container_name: "kotlin-collection-manager-invoker-service"
+    restart: always
+    ports:
+      - "6000:6000"
+      - "8180:8080"
+    entrypoint: /bin/bash /home/startup.sh
+    volumes:
+      - ./docker/invoker-service:/home
+    networks:
+      kotlin-collection-manager-net:
+
+  collection-service:
+    image: openjdk:21-jdk-slim
+    container_name: "kotlin-collection-manager-collection-service"
+    restart: always
+    ports:
+      - "8181:8081"
+    entrypoint: /bin/bash /home/startup.sh
+    volumes:
+      - ./docker/collection-service:/home
+    networks:
+      kotlin-collection-manager-net:
+
+  file-service:
+    image: openjdk:21-jdk-slim
+    container_name: "kotlin-collection-manager-file-service"
+    restart: always
+    ports:
+      - "8182:8082"
+    entrypoint: /bin/bash /home/startup.sh
+    volumes:
+      - ./docker/file-service:/home
+    networks:
+      kotlin-collection-manager-net:
+
+networks:
+  kotlin-collection-manager-net:
+    driver: bridge
+
+volumes:
+  postgres_data:
